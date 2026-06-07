@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Custom completion rule definitions for mod_codeframe.
  *
@@ -22,8 +23,6 @@
  */
 
 namespace mod_codeframe\completion;
-
-defined('MOODLE_INTERNAL') || die();
 
 use core_completion\activity_custom_completion;
 
@@ -39,7 +38,6 @@ use core_completion\activity_custom_completion;
  * would create a circular dependency inside update_state().
  */
 class custom_completion extends activity_custom_completion {
-
     /**
      * Return the completion state for the given rule and current user.
      *
@@ -126,8 +124,8 @@ class custom_completion extends activity_custom_completion {
      */
     public function get_sort_order(): array {
         return [
-            'completionview',       // "View the activity" — standard rule
-            'completioncomplete',   // "Require iframe completion" — custom rule
+            'completionview', // View the activity standard rule.
+            'completioncomplete', // Require iframe completion custom rule.
         ];
     }
 }

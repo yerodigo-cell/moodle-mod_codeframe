@@ -13,7 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
  * Backup task for the Codeframe module.
  *
@@ -21,6 +20,8 @@
  * @copyright  2026 Yeison Diaz
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/codeframe/backup/moodle2/backup_codeframe_stepslib.php');
 
@@ -32,7 +33,6 @@ require_once($CFG->dirroot . '/mod/codeframe/backup/moodle2/backup_codeframe_ste
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class backup_codeframe_activity_task extends backup_activity_task {
-
     /**
      * Define the backup settings for the activity.
      */

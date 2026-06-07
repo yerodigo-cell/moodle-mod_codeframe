@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Restore task for mod_codeframe.
  *
@@ -25,8 +26,14 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/codeframe/backup/moodle2/restore_codeframe_stepslib.php');
 
+/**
+ * Restore task for the Codeframe activity class.
+ *
+ * @package    mod_codeframe
+ * @copyright  2026 Yeison Diaz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class restore_codeframe_activity_task extends restore_activity_task {
-
     /**
      * Define the specific settings for the task.
      */
@@ -43,8 +50,10 @@ class restore_codeframe_activity_task extends restore_activity_task {
 
     /**
      * Define the contents in the activity that must be processed by the link decoder.
+     *
+     * @return array
      */
-    static public function define_decode_contents() {
+    public static function define_decode_contents() {
         $contents = [];
         $contents[] = new restore_decode_content('codeframe', ['intro'], 'codeframe');
         return $contents;
@@ -52,8 +61,10 @@ class restore_codeframe_activity_task extends restore_activity_task {
 
     /**
      * Define the decoding rules for links.
+     *
+     * @return array
      */
-    static public function define_decode_rules() {
+    public static function define_decode_rules() {
         $rules = [];
         $rules[] = new restore_decode_rule('CODEFRAMEINDEX', '/mod/codeframe/index.php?id=$1', 'course');
         $rules[] = new restore_decode_rule('CODEFRAMEVIEWBYID', '/mod/codeframe/view.php?id=$1', 'course_module');
@@ -62,14 +73,21 @@ class restore_codeframe_activity_task extends restore_activity_task {
 
     /**
      * Define the log rules.
+     *
+     * @return array
      */
-    static public function define_restore_log_rules() {
+    public static function define_restore_log_rules() {
         $rules = [];
         $rules[] = new restore_log_rule('codeframe', 'view', 'view.php?id={course_module}', '{codeframe}');
         return $rules;
     }
 
-    static public function define_restore_log_rules_for_course() {
+    /**
+     * Define the restore log rules for course.
+     *
+     * @return array
+     */
+    public static function define_restore_log_rules_for_course() {
         $rules = [];
         return $rules;
     }

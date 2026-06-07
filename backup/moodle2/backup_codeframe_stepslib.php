@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Backup steps library for mod_codeframe.
  *
@@ -21,22 +22,30 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
+/**
+ * Backup structure step class for Codeframe activity.
+ *
+ * @package    mod_codeframe
+ * @copyright  2026 Yeison Diaz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class backup_codeframe_activity_structure_step extends backup_activity_structure_step {
-
+    /**
+     * Define the structure of the backup.
+     *
+     * @return backup_nested_element
+     */
     protected function define_structure() {
-
         // 1. Define the XML structure.
         $codeframe = new backup_nested_element('codeframe', ['id'], [
-            'course', 'name', 'intro', 'introformat', 'embedcode', 
-            'completioncomplete', 'timecreated', 'timemodified'
+            'course', 'name', 'intro', 'introformat', 'embedcode',
+            'completioncomplete', 'timecreated', 'timemodified',
         ]);
 
         $completions = new backup_nested_element('codeframe_completions');
-        
+
         $completion = new backup_nested_element('codeframe_completion', ['id'], [
-            'userid', 'timecompleted'
+            'userid', 'timecompleted',
         ]);
 
         // 2. Build the tree.
@@ -57,8 +66,8 @@ class backup_codeframe_activity_structure_step extends backup_activity_structure
 
         // 5. Annotate file areas to package the uploaded HTML5 files.
         $codeframe->annotate_files('mod_codeframe', 'intro', null);
-        
-        // 'content' area uses the codeframe instance ID as the itemid.
+
+        // Annotate the content area which uses the codeframe instance ID as the itemid.
         $codeframe->annotate_files('mod_codeframe', 'content', 'id');
 
         return $this->prepare_activity_structure($codeframe);
