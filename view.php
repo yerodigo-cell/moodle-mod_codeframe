@@ -1,4 +1,19 @@
 <?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * View page for the Codeframe activity module.
  *
@@ -15,8 +30,8 @@ $id = required_param('id', PARAM_INT);
 
 // Fetch all necessary database objects.
 $cm        = get_coursemodule_from_id('codeframe', $id, 0, false, MUST_EXIST);
-$course    = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-$codeframe = $DB->get_record('codeframe', array('id' => $cm->instance), '*', MUST_EXIST);
+$course    = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+$codeframe = $DB->get_record('codeframe', ['id' => $cm->instance], '*', MUST_EXIST);
 
 // Security checks and course login.
 require_course_login($course, true, $cm);
@@ -24,16 +39,16 @@ $context = context_module::instance($cm->id);
 require_capability('mod/codeframe:view', $context);
 
 // Set up Moodle page properties.
-$PAGE->set_url('/mod/codeframe/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/codeframe/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($codeframe->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($context);
 
 // Trigger course module viewed event (for logging and course statistics).
-$event = \mod_codeframe\event\course_module_viewed::create(array(
+$event = \mod_codeframe\event\course_module_viewed::create([
     'objectid' => $codeframe->id,
     'context'  => $context,
-));
+]);
 $event->add_record_snapshot('course_modules', $cm);
 $event->add_record_snapshot('course', $course);
 $event->add_record_snapshot('codeframe', $codeframe);
@@ -45,7 +60,6 @@ $completion->set_module_viewed($cm);
 
 // Output page header.
 echo $OUTPUT->header();
-
 
 // Render embed code inside a two-layer responsive wrapper.
 // .codeframe_container  → full-width outer container
@@ -113,11 +127,11 @@ if (trim($codeframe->embedcode) !== '') {
     }
 }
 
-echo html_writer::end_div(); // .codeframe_wrapper
-echo html_writer::end_div(); // .codeframe_container
+echo html_writer::end_div(); // End of .codeframe_wrapper.
+echo html_writer::end_div(); // End of .codeframe_container.
 
 // Initialize the AMD tracking script, passing cmid and courseid as parameters.
-$PAGE->requires->js_call_amd('mod_codeframe/tracker', 'init', array($cm->id, $course->id));
+$PAGE->requires->js_call_amd('mod_codeframe/tracker', 'init', [$cm->id, $course->id]);
 
 // Output page footer.
 echo $OUTPUT->footer();

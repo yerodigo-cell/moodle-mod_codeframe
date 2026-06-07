@@ -20,7 +20,7 @@ define(['core/ajax', 'core/log'], function(Ajax, Log) {
                  // Determine if the message data is equal to 'codeframe_completed'
                  // or if it's an object containing this message.
                  var isCompleted = false;
- 
+
                  if (typeof event.data === 'string' && event.data === 'codeframe_completed') {
                      isCompleted = true;
                  } else if (event.data && typeof event.data === 'object' && event.data.message === 'codeframe_completed') {
@@ -39,6 +39,7 @@ define(['core/ajax', 'core/log'], function(Ajax, Log) {
                         }
                     }])[0].then(function(result) {
                         Log.debug('AJAX completion response success:', result);
+                        return result;
                     }).catch(function(error) {
                         Log.error('AJAX completion response failure:', error);
                     });
