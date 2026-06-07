@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100%" height="100%">
+  <!--
+    Colored thin-line-art icon for mod_codeframe.
+    Optimized for perfect weight balance in Moodle's Activity Chooser.
+  -->
+  <defs>
+    <!-- Blue → Violet gradient for lines -->
+    <linearGradient id="lineG" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ── Browser window outline (thin stroke width 1.1) ────────────────── -->
+  <rect x="2" y="2.5" width="20" height="19" rx="2" 
+        fill="none" stroke="url(#lineG)" stroke-width="1.1"/>
+
+  <!-- ── Top bar divider line (thin stroke width 1.1) ──────────────────── -->
+  <line x1="2" y1="7.5" x2="22" y2="7.5" 
+        stroke="url(#lineG)" stroke-width="1.1"/>
+
+  <!-- ── Three traffic-light buttons (red, yellow, green) ──────────────── -->
+  <circle cx="5.5" cy="5" r="0.8" fill="#F87171"/>
+  <circle cx="9"   cy="5" r="0.8" fill="#FBBF24"/>
+  <circle cx="12.5" cy="5" r="0.8" fill="#34D399"/>
+
+  <!-- ── Mouse cursor arrow outline (thin stroke width 1.0) ────────────── -->
+  <path d="M8.5 10.5 L8.5 17.5 L10.5 15.5 L12.2 19 L13.3 18.3 L11.6 15 L14 15 Z"
+        fill="none" stroke="#7C3AED" stroke-width="1.0" stroke-linejoin="round"/>
+
+  <!-- ── Click ripple (fine stroke width 0.8) ──────────────────────────── -->
+  <circle cx="17.5" cy="12.5" r="2.5"
+          fill="none" stroke="#3B82F6" stroke-width="0.8" opacity="0.6"/>
+  <circle cx="17.5" cy="12.5" r="1.2"
+          fill="none" stroke="#3B82F6" stroke-width="0.8" opacity="0.8"/>
+  <circle cx="17.5" cy="12.5" r="0.4"
+          fill="#3B82F6"/>
+</svg>

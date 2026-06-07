@@ -1,0 +1,97 @@
+/**
+ * Styles for mod_codeframe activity module.
+ *
+ * @package    mod_codeframe
+ * @copyright  2026 Yeison Diaz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/* ── Outer container ─────────────────────────────────────────────────────── */
+.codeframe_container {
+    width: 100%;
+    margin: 0 0 1.5rem 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+/* ── Responsive wrapper: maintains 16:9 aspect ratio on ALL screen sizes ─── *
+ *  Technique: height=0 + padding-bottom=56.25% (= 9/16 × 100%).             *
+ *  The iframe is absolutely positioned inside, filling the full area.        *
+ * ─────────────────────────────────────────────────────────────────────────── */
+.codeframe_wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 ratio */
+    height: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
+}
+
+.codeframe_wrapper iframe {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border: none !important;
+    border-radius: 6px;
+    display: block;
+}
+
+/* ── Mobile & Portrait view customization ────────────────────────────────── */
+@media (max-width: 767px) {
+    /* 1. Reset huge margins/paddings on Moodle's entire page wrappers, main region
+       and card wrappers specifically for this activity view page.
+       This overrides Moove/Boost drawer paddings, Bootstrap grid columns, and card spaces
+       to guarantee the content area spans the absolute 100% screen width. */
+    #page-mod-codeframe-view #page,
+    #page-mod-codeframe-view #page-wrapper,
+    #page-mod-codeframe-view #topofscroll,
+    #page-mod-codeframe-view #page-content,
+    #page-mod-codeframe-view #region-main-box,
+    #page-mod-codeframe-view #region-main,
+    #page-mod-codeframe-view .main-inner,
+    #page-mod-codeframe-view .container,
+    #page-mod-codeframe-view .container-fluid,
+    #page-mod-codeframe-view [class*="col-"],
+    #page-mod-codeframe-view .row,
+    #page-mod-codeframe-view .card,
+    #page-mod-codeframe-view .card-body,
+    #page-mod-codeframe-view [role="main"] {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    /* 2. Stretch our container to the absolute edges of the screen */
+    #page-mod-codeframe-view .codeframe_container {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .codeframe_wrapper {
+        padding-bottom: 0;
+        /* On narrow vertical screens, use a taller viewport height instead of 16:9
+           so the iframe content has plenty of room to display naturally without being cut off. */
+        height: 85vh;
+        min-height: 600px;
+        max-height: 1000px;
+        border-radius: 0; /* Remove border-radius on mobile for edge-to-edge seamless display */
+        box-shadow: none; /* Shadow is not needed when it fills the full width */
+    }
+}
+
+
+
+
+
