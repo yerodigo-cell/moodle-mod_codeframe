@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Web service function definitions for mod_codeframe.
  *
@@ -23,13 +24,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$functions = array(
-    'mod_codeframe_mark_completed' => array(
+$functions = [
+    'mod_codeframe_mark_completed' => [
         'classname'     => 'mod_codeframe\external\mark_completed',
         'methodname'    => 'execute',
         'description'   => 'Marks the codeframe activity as completed for the current user.',
         'type'          => 'write',
         'ajax'          => true,
         'loginrequired' => true,
-    ),
-);
+    ],
+];

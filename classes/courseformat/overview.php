@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Codeframe overview for the course activities tab (Moodle 5.x architecture).
  *
@@ -23,15 +24,19 @@
 
 namespace mod_codeframe\courseformat;
 
-defined('MOODLE_INTERNAL') || die();
-
 use core_courseformat\activityoverviewbase;
 use core_courseformat\local\overview\overviewitem;
 use html_writer;
 use moodle_url;
 
+/**
+ * Overview class for the course activities tab.
+ *
+ * @package    mod_codeframe
+ * @copyright  2026 Yeison Diaz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class overview extends activityoverviewbase {
-
     /**
      * Provides custom columns/data to be displayed in the Moodle 5 Activities tab table.
      *
@@ -46,7 +51,6 @@ class overview extends activityoverviewbase {
             get_string('view'),
             ['class' => 'btn btn-secondary btn-sm']
         );
-        
         $items['viewaction'] = new overviewitem(
             'Actions',
             'view',
@@ -61,7 +65,6 @@ class overview extends activityoverviewbase {
                 get_string('progressreport', 'mod_codeframe'),
                 ['class' => 'btn btn-info btn-sm text-white ml-2']
             );
-            
             $items['progressreport'] = new overviewitem(
                 get_string('progressreport', 'mod_codeframe'),
                 'progressreport',

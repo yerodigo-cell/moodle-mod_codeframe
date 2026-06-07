@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * External function for marking a Codeframe activity as complete.
  *
@@ -22,8 +23,6 @@
  */
 
 namespace mod_codeframe\external;
-
-defined('MOODLE_INTERNAL') || die();
 
 use core_external\external_api;
 use core_external\external_function_parameters;
@@ -42,7 +41,6 @@ use core_external\external_single_structure;
  *     persist COMPLETION_COMPLETE to mdl_course_modules_completion.
  */
 class mark_completed extends external_api {
-
     /**
      * Describe accepted parameters.
      *
@@ -91,8 +89,8 @@ class mark_completed extends external_api {
         }
 
         // 4. Write to our own tracking table BEFORE calling update_state().
-        //    custom_completion::get_state() reads from this table, so the
-        //    record must exist when Moodle evaluates the completion rules.
+        // custom_completion::get_state() reads from this table, so the
+        // record must exist when Moodle evaluates the completion rules.
         $existing = $DB->get_record('codeframe_completion', [
             'cmid'   => $cm->id,
             'userid' => $USER->id,
@@ -115,7 +113,7 @@ class mark_completed extends external_api {
         $DB->insert_record('codeframe_completion', $record);
 
         // 5. Trigger Moodle's completion engine.
-        //    Now get_state() will find the row and return COMPLETION_COMPLETE.
+        // Now get_state() will find the row and return COMPLETION_COMPLETE.
         $completion->update_state($cm, COMPLETION_COMPLETE, $USER->id);
 
         return [
