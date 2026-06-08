@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Add a new instance of a Codeframe activity.
  *
@@ -207,7 +205,7 @@ function codeframe_build_embed_html(string $embedcode): string {
         $value = $matches[1] . $qs;
     }
 
-    // htmlspecialchars prevents XSS via crafted URLs.
+    // Htmlspecialchars prevents XSS via crafted URLs.
     $safeurl = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 
     return '<iframe'
@@ -284,7 +282,7 @@ function codeframe_extend_settings_navigation(settings_navigation $settingsnav, 
     if (has_capability('mod/codeframe:addinstance', $PAGE->context)) {
         // Create the URL for the report page.
         $url = new moodle_url('/mod/codeframe/report.php', ['id' => $PAGE->cm->id]);
-        
+
         // Add the node to the settings navigation.
         $node = $codeframenode->add(
             get_string('progressreport', 'mod_codeframe'),
