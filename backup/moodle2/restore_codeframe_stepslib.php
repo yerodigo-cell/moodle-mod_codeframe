@@ -37,9 +37,11 @@ class restore_codeframe_activity_structure_step extends restore_activity_structu
      */
     protected function define_structure() {
         $paths = [];
-
         $paths[] = new restore_path_element('codeframe', '/activity/codeframe');
-        $paths[] = new restore_path_element('codeframe_completion', '/activity/codeframe/codeframe_completions/codeframe_completion');
+        $paths[] = new restore_path_element(
+            'codeframe_completion',
+            '/activity/codeframe/codeframe_completions/codeframe_completion'
+        );
 
         return $this->prepare_activity_structure($paths);
     }
