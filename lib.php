@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Library of functions and callbacks for the Codeframe activity module.
  *
@@ -111,7 +112,7 @@ function codeframe_delete_instance($id) {
     global $DB;
 
     // Verify record exists before deletion.
-    $codeframe = $DB->get_record('codeframe', array('id' => $id));
+    $codeframe = $DB->get_record('codeframe', ['id' => $id]);
     if (!$codeframe) {
         return false;
     }
@@ -125,7 +126,7 @@ function codeframe_delete_instance($id) {
     }
 
     // Delete the record from mdl_codeframe.
-    return $DB->delete_records('codeframe', array('id' => $id));
+    return $DB->delete_records('codeframe', ['id' => $id]);
 }
 
 /**
@@ -182,35 +183,29 @@ function codeframe_build_embed_html(string $embedcode): string {
     }
 
     // Now $value is definitely a plain URL.
-    
-    // --- SMART URL CONVERTERS ---
-    // YouTube
+    // Smart URL converters.
+    // YouTube.
     if (preg_match('#^https?://(?:www\.)?youtube\.com/watch\?v=([^&]+)#i', $value, $matches)) {
         $value = 'https://www.youtube.com/embed/' . $matches[1];
     } else if (preg_match('#^https?://youtu\.be/([^?]+)#i', $value, $matches)) {
         $value = 'https://www.youtube.com/embed/' . $matches[1];
-    }
-    // Google Docs (Publish to web -> /pub)
-    else if (preg_match('#^(https://docs\.google\.com/document/d/(?:e/)?[^/]+/pub)(\?.*)?$#i', $value, $matches)) {
+    } else if (preg_match('#^(https://docs\.google\.com/document/d/(?:e/)?[^/]+/pub)(\?.*)?$#i', $value, $matches)) {
+        // Google Docs (Publish to web -> /pub).
         $qs = !empty($matches[2]) ? $matches[2] . '&embedded=true' : '?embedded=true';
         $value = $matches[1] . $qs;
-    }
-    // Google Slides (Publish to web -> /pub)
-    else if (preg_match('#^(https://docs\.google\.com/presentation/d/(?:e/)?[^/]+)/pub(\?.*)?$#i', $value, $matches)) {
+    } else if (preg_match('#^(https://docs\.google\.com/presentation/d/(?:e/)?[^/]+)/pub(\?.*)?$#i', $value, $matches)) {
+        // Google Slides (Publish to web -> /pub).
         $qs = !empty($matches[2]) ? $matches[2] : '';
         $value = $matches[1] . '/embed' . $qs;
-    }
-    // Google Forms
-    else if (preg_match('#^(https://docs\.google\.com/forms/d/(?:e/)?[^/]+/viewform)(\?.*)?$#i', $value, $matches)) {
+    } else if (preg_match('#^(https://docs\.google\.com/forms/d/(?:e/)?[^/]+/viewform)(\?.*)?$#i', $value, $matches)) {
+        // Google Forms.
         $qs = !empty($matches[2]) ? $matches[2] . '&embedded=true' : '?embedded=true';
         $value = $matches[1] . $qs;
-    }
-    // Google Sheets
-    else if (preg_match('#^(https://docs\.google\.com/spreadsheets/d/(?:e/)?[^/]+/pubhtml)(\?.*)?$#i', $value, $matches)) {
+    } else if (preg_match('#^(https://docs\.google\.com/spreadsheets/d/(?:e/)?[^/]+/pubhtml)(\?.*)?$#i', $value, $matches)) {
+        // Google Sheets.
         $qs = !empty($matches[2]) ? $matches[2] . '&widget=true&headers=false' : '?widget=true&headers=false';
         $value = $matches[1] . $qs;
     }
-    // ----------------------------
 
     // htmlspecialchars prevents XSS via crafted URLs.
     $safeurl = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
@@ -237,7 +232,7 @@ function codeframe_build_embed_html(string $embedcode): string {
  * @param array $options Additional options.
  * @return bool False on failure, or sends the file and exits.
  */
-function codeframe_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+function codeframe_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
     global $CFG, $DB;
 
     // Ensure user is logged in.
@@ -306,5 +301,3 @@ function codeframe_extend_settings_navigation(settings_navigation $settingsnav, 
         }
     }
 }
-
-
