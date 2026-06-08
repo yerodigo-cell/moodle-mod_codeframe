@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['codeframe:addinstance']   = 'Añadir una nueva actividad Codeframe';
-$string['eventcoursemoduleviewed'] = 'Codeframe visto';
 $string['codeframe:view']          = 'Ver actividad Codeframe';
+$string['eventcoursemoduleviewed'] = 'Codeframe visto';
 $string['completed']               = 'Completado';
 $string['completioncomplete']      = 'Requerir finalización del iframe';
 $string['completioncomplete_help'] = 'Si está habilitado, el estudiante debe completar la actividad interactiva (el iframe debe enviar el mensaje "codeframe_completed") para marcar esta actividad de Moodle como completada.';

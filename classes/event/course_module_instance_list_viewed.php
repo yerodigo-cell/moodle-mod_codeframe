@@ -24,8 +24,6 @@
 
 namespace mod_codeframe\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * The course_module_instance_list_viewed event class.
  *

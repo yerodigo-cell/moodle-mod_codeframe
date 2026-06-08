@@ -317,7 +317,7 @@ function codeframe_get_completion_active_rule_descriptions($course, $cm) {
     if (isset($cm->customdata['customcompletionrules']['completioncomplete'])) {
         $rules[] = get_string('completioncomplete', 'mod_codeframe');
     } else {
-        // Fallback for older Moodle versions where customdata might not be populated
+        // Fallback for older Moodle versions where customdata might not be populated.
         global $DB;
         $completioncomplete = $DB->get_field('codeframe', 'completioncomplete', ['id' => $cm->instance], IGNORE_MISSING);
         if ($completioncomplete) {
@@ -343,7 +343,7 @@ function codeframe_get_completion_state($course, $cm, $userid, $type) {
     if ($type === 'completioncomplete') {
         $completed = $DB->record_exists('codeframe_completion', [
             'cmid' => $cm->id,
-            'userid' => $userid
+            'userid' => $userid,
         ]);
         return $completed ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE;
     }
