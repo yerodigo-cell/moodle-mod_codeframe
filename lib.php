@@ -301,3 +301,50 @@ function codeframe_extend_settings_navigation(settings_navigation $settingsnav, 
         }
     }
 }
+
+/**
+ * Returns an array of active custom completion rules for a given module instance.
+ * Required for Moodle versions before the custom_completion class was fully adopted.
+ *
+ * @param stdClass $course The course object.
+ * @param cm_info $cm The course module information.
+ * @return array Array of active rule descriptions.
+ */
+function codeframe_get_completion_active_rule_descriptions($course, $cm) {
+    $rules = [];
+    if (isset($cm->customdata['customcompletionrules']['completioncomplete'])) {
+        $rules[] = get_string('completioncomplete', 'mod_codeframe');
+    } else {
+        // Fallback for older Moodle versions where customdata might not be populated
+        global $DB;
+        $completioncomplete = $DB->get_field('codeframe', 'completioncomplete', ['id' => $cm->instance], IGNORE_MISSING);
+        if ($completioncomplete) {
+            $rules[] = get_string('completioncomplete', 'mod_codeframe');
+        }
+    }
+    return $rules;
+}
+
+/**
+ * Returns the state of a custom completion rule for a given user.
+ * Required for Moodle versions before the custom_completion class was fully adopted.
+ *
+ * @param stdClass $course The course object.
+ * @param cm_info $cm The course module information.
+ * @param int $userid The user ID.
+ * @param string $type The rule type.
+ * @return int The completion state (COMPLETION_COMPLETE or COMPLETION_INCOMPLETE).
+ */
+function codeframe_get_completion_state($course, $cm, $userid, $type) {
+    global $DB;
+
+    if ($type === 'completioncomplete') {
+        $completed = $DB->record_exists('codeframe_completion', [
+            'cmid' => $cm->id,
+            'userid' => $userid
+        ]);
+        return $completed ? COMPLETION_COMPLETE : COMPLETION_INCOMPLETE;
+    }
+
+    return COMPLETION_UNKNOWN;
+}
