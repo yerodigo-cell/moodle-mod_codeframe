@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Event for when a codeframe module is viewed.
+ * Event for when the list of codeframe instances is viewed.
  *
  * @package    mod_codeframe
  * @copyright  2026 Yeison Diaz
@@ -24,30 +24,15 @@
 
 namespace mod_codeframe\event;
 
+defined('MOODLE_INTERNAL') || die();
+
 /**
- * The course_module_viewed event class.
+ * The course_module_instance_list_viewed event class.
  *
  * @package    mod_codeframe
  * @copyright  2026 Yeison Diaz
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_module_viewed extends \core\event\course_module_viewed {
-    /**
-     * Init method.
-     */
-    protected function init() {
-        $this->data['objecttable'] = 'codeframe';
-        $this->data['crud'] = 'r';
-        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
-    }
-
-    /**
-     * Map objectid to the codeframe table.
-     * Required by Moodle's event mapping and plugins like Level Up XP.
-     *
-     * @return array
-     */
-    public static function get_objectid_mapping() {
-        return ['db' => 'codeframe', 'restore' => 'codeframe'];
-    }
+class course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed {
+    // No specific mapping needed for this base class as it doesn't represent a single object.
 }

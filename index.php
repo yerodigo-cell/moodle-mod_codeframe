@@ -36,6 +36,10 @@ $PAGE->set_title(format_string($course->fullname));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_pagelayout('incourse');
 
+// Trigger instances list viewed event.
+$event = \mod_codeframe\event\course_module_instance_list_viewed::create(['context' => \context_course::instance($course->id)]);
+$event->trigger();
+
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('modulenameplural', 'mod_codeframe'));
 
