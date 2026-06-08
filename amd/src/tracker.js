@@ -39,6 +39,15 @@ define(['core/ajax', 'core/log'], function(Ajax, Log) {
                         }
                     }])[0].then(function(result) {
                         Log.debug('AJAX completion response success:', result);
+                        if (result && result.status) {
+                            // Visually update completion badges to green without reloading the page.
+                            var badges = document.querySelectorAll('.badge-light, .badge-warning, .badge-secondary, [data-region="completion-info"] .badge');
+                            badges.forEach(function(badge) {
+                                badge.classList.remove('badge-light', 'badge-warning', 'badge-secondary');
+                                badge.classList.add('badge-success');
+                                badge.innerHTML = badge.innerHTML.replace('To do:', 'Done:').replace('Por hacer:', 'Hecho:');
+                            });
+                        }
                         return result;
                     }).catch(function(error) {
                         Log.error('AJAX completion response failure:', error);
