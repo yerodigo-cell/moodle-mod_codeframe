@@ -40,18 +40,23 @@ define(['core/ajax', 'core/log'], function(Ajax, Log) {
                     }])[0].then(function(result) {
                         Log.debug('AJAX completion response success:', result);
                         if (result && result.status) {
-                            // Visually update completion badges to green without reloading the page.
-                            var badges = document.querySelectorAll('.badge-light, .badge-warning, .badge-secondary, .text-bg-light, .text-bg-warning, .text-bg-secondary, [data-region="completion-info"] .badge');
-                            badges.forEach(function(badge) {
-                                badge.classList.remove('badge-light', 'badge-warning', 'badge-secondary', 'text-bg-light', 'text-bg-warning', 'text-bg-secondary', 'alert-warning', 'text-dark');
-                                badge.classList.add('badge-success', 'bg-success', 'text-white', 'alert-success');
-                                badge.innerHTML = badge.innerHTML.replace('To do:', 'Done:').replace('Por hacer:', 'Hecho:');
-                                
-                                // Force styles to guarantee the visual update across all Moodle themes
-                                badge.style.backgroundColor = '#198754';
-                                badge.style.color = '#ffffff';
-                                badge.style.borderColor = '#198754';
-                            });
+                            var completionRegion = document.querySelector('[data-region="completion-info"]');
+                            if (completionRegion) {
+                                var elements = completionRegion.querySelectorAll('*');
+                                elements.forEach(function(el) {
+                                    var cls = el.className || '';
+                                    if (typeof cls === 'string' && (cls.indexOf('badge') > -1 || cls.indexOf('btn') > -1 || cls.indexOf('alert') > -1 || cls.indexOf('bg-') > -1)) {
+                                        el.style.setProperty('background-color', '#198754', 'important');
+                                        el.style.setProperty('color', '#ffffff', 'important');
+                                        el.style.setProperty('border-color', '#198754', 'important');
+                                    }
+                                });
+                                var walker = document.createTreeWalker(completionRegion, NodeFilter.SHOW_TEXT, null, false);
+                                var node;
+                                while (node = walker.nextNode()) {
+                                    node.nodeValue = node.nodeValue.replace('To do:', 'Done:').replace('Por hacer:', 'Hecho:');
+                                }
+                            }
                         }
                         return result;
                     }).catch(function(error) {
