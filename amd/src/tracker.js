@@ -41,11 +41,16 @@ define(['core/ajax', 'core/log'], function(Ajax, Log) {
                         Log.debug('AJAX completion response success:', result);
                         if (result && result.status) {
                             // Visually update completion badges to green without reloading the page.
-                            var badges = document.querySelectorAll('.badge-light, .badge-warning, .badge-secondary, [data-region="completion-info"] .badge');
+                            var badges = document.querySelectorAll('.badge-light, .badge-warning, .badge-secondary, .text-bg-light, .text-bg-warning, .text-bg-secondary, [data-region="completion-info"] .badge');
                             badges.forEach(function(badge) {
-                                badge.classList.remove('badge-light', 'badge-warning', 'badge-secondary');
-                                badge.classList.add('badge-success');
+                                badge.classList.remove('badge-light', 'badge-warning', 'badge-secondary', 'text-bg-light', 'text-bg-warning', 'text-bg-secondary', 'alert-warning', 'text-dark');
+                                badge.classList.add('badge-success', 'bg-success', 'text-white', 'alert-success');
                                 badge.innerHTML = badge.innerHTML.replace('To do:', 'Done:').replace('Por hacer:', 'Hecho:');
+                                
+                                // Force styles to guarantee the visual update across all Moodle themes
+                                badge.style.backgroundColor = '#198754';
+                                badge.style.color = '#ffffff';
+                                badge.style.borderColor = '#198754';
                             });
                         }
                         return result;
