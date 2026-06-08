@@ -29,11 +29,6 @@ $id = required_param('id', PARAM_INT); // Course ID.
 $course = $DB->get_record('course', ['id' => $id], '*', MUST_EXIST);
 require_course_login($course);
 
-// In Moodle 4.3 / 5.0+, redirect seamlessly to the centralized course overview page.
-if (class_exists('core_courseformat\activityoverviewbase')) {
-    \core_courseformat\activityoverviewbase::redirect_to_overview_page($id, 'codeframe');
-    exit;
-}
 
 // Fallback for older Moodle versions.
 $PAGE->set_url('/mod/codeframe/index.php', ['id' => $id]);
