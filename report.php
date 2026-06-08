@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Progress Report for Codeframe activity.
  *
@@ -23,7 +24,7 @@
 
 require(__DIR__ . '/../../config.php');
 
-$id = required_param('id', PARAM_INT); // Course module ID
+$id = required_param('id', PARAM_INT); // Course module ID.
 
 $cm = get_coursemodule_from_id('codeframe', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
@@ -47,7 +48,8 @@ echo $OUTPUT->heading(get_string('progressreport', 'mod_codeframe'));
 
 // Fetch users enrolled in the course who can view the activity.
 $coursecontext = context_course::instance($course->id);
-$enrolledusers = get_enrolled_users($coursecontext, 'mod/codeframe:view', 0, 'u.id, u.firstname, u.lastname, u.email, u.picture, u.imagealt');
+$userfields = 'u.id, u.firstname, u.lastname, u.email, u.picture, u.imagealt';
+$enrolledusers = get_enrolled_users($coursecontext, 'mod/codeframe:view', 0, $userfields);
 
 // Filter out users who are teachers (i.e., those who can add instances).
 $students = [];
@@ -70,7 +72,7 @@ if (empty($students)) {
         get_string('student', 'mod_codeframe'),
         get_string('email'),
         get_string('status', 'mod_codeframe'),
-        get_string('timecompleted', 'mod_codeframe')
+        get_string('timecompleted', 'mod_codeframe'),
     ];
 
     foreach ($students as $student) {
@@ -83,14 +85,18 @@ if (empty($students)) {
 
         // Determine completion status.
         $hascompleted = isset($completions[$student->id]);
-        
+
         if ($hascompleted) {
             $statustext = get_string('completed', 'mod_codeframe');
-            $statushtml = html_writer::span('&#10004; ' . $statustext, 'badge badge-success bg-success text-white px-2 py-1', ['style' => 'font-size:14px;']);
+            $icon = '&#10004; ' . $statustext;
+            $class = 'badge badge-success bg-success text-white px-2 py-1';
+            $statushtml = html_writer::span($icon, $class, ['style' => 'font-size:14px;']);
             $timecompleted = userdate($completions[$student->id]->timecompleted);
         } else {
             $statustext = get_string('notcompleted', 'mod_codeframe');
-            $statushtml = html_writer::span('&#10006; ' . $statustext, 'badge badge-secondary bg-secondary text-white px-2 py-1', ['style' => 'font-size:14px;']);
+            $icon = '&#10006; ' . $statustext;
+            $class = 'badge badge-secondary bg-secondary text-white px-2 py-1';
+            $statushtml = html_writer::span($icon, $class, ['style' => 'font-size:14px;']);
             $timecompleted = '-';
         }
 
@@ -98,7 +104,7 @@ if (empty($students)) {
             $studentcell,
             $student->email,
             $statushtml,
-            $timecompleted
+            $timecompleted,
         ];
     }
 

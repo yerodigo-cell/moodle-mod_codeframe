@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * Settings form for the Codeframe activity module.
  *
@@ -25,8 +26,14 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
 
+/**
+ * Settings form class for Codeframe.
+ *
+ * @package    mod_codeframe
+ * @copyright  2026 Yeison Diaz
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 class mod_codeframe_mod_form extends moodleform_mod {
-
     /**
      * Define the form elements.
      */
@@ -35,11 +42,11 @@ class mod_codeframe_mod_form extends moodleform_mod {
 
         $mform = $this->_form;
 
-        // ── General section ──────────────────────────────────────────────────
+        // General section.
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Name.
-        $mform->addElement('text', 'name', get_string('name'), array('size' => '64'));
+        $mform->addElement('text', 'name', get_string('name'), ['size' => '64']);
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);
         } else {
@@ -51,7 +58,7 @@ class mod_codeframe_mod_form extends moodleform_mod {
         // Introduction / Description.
         $this->standard_intro_elements();
 
-        // ── Codeframe settings section ────────────────────────────────────────
+        // Codeframe settings section.
         $mform->addElement('header', 'codeframe_settings', get_string('pluginadministration', 'mod_codeframe'));
         $mform->setExpanded('codeframe_settings');
 
@@ -77,7 +84,7 @@ class mod_codeframe_mod_form extends moodleform_mod {
         );
         $mform->addHelpButton('files', 'uploadfiles', 'mod_codeframe');
 
-        // ── Completion info notice (right below the inputs) ─────────────────
+        // Completion info notice (right below the inputs).
         $mform->addElement(
             'static',
             'completioninfo',
@@ -85,11 +92,11 @@ class mod_codeframe_mod_form extends moodleform_mod {
             html_writer::div(
                 get_string('completioninfo', 'mod_codeframe'),
                 '',
-                ['style' => 'margin-top:8px; padding:10px 14px; background:#eef4fb; border-left:4px solid #4a90d9; border-radius:4px; font-size:0.92em; line-height:1.5;']
+                ['class' => 'alert alert-info mt-2 p-3']
             )
         );
 
-        // ── Standard Moodle module settings (groups, availability, completion) ─
+        // Standard Moodle module settings (groups, availability, completion).
         $this->standard_coursemodule_elements();
 
         // Standard save buttons.
@@ -177,35 +184,35 @@ class mod_codeframe_mod_form extends moodleform_mod {
      * BOTH "View the activity" AND "Require iframe completion" are already
      * ticked — they do not need to configure completion manually.
      *
-     * @param array $default_values
+     * @param array $defaultvalues
      */
-    public function data_preprocessing(&$default_values) {
-        parent::data_preprocessing($default_values);
+    public function data_preprocessing(&$defaultvalues) {
+        parent::data_preprocessing($defaultvalues);
 
         $suffix = $this->get_suffix();
 
         // Load files when editing.
-        if (!empty($default_values['id'])) {
-            $draftitemid = 0; // Will be populated by the function by reference
+        if (!empty($defaultvalues['id'])) {
+            $draftitemid = 0; // Will be populated by the function by reference.
             file_prepare_draft_area(
                 $draftitemid,
                 $this->context->id,
                 'mod_codeframe',
                 'content',
-                $default_values['id'],
+                $defaultvalues['id'],
                 ['subdirs' => 1]
             );
-            $default_values['files'] = $draftitemid;
+            $defaultvalues['files'] = $draftitemid;
         }
 
         // Only apply defaults for a brand-new instance (no $cm yet).
         if (empty($this->_cm)) {
             // Activate automatic completion tracking.
-            $default_values['completion' . $suffix]          = COMPLETION_TRACKING_AUTOMATIC;
+            $defaultvalues['completion' . $suffix]          = COMPLETION_TRACKING_AUTOMATIC;
             // Pre-tick "View the activity".
-            $default_values['completionview' . $suffix]      = 1;
+            $defaultvalues['completionview' . $suffix]      = 1;
             // Pre-tick "Require iframe completion".
-            $default_values['completioncomplete' . $suffix]  = 1;
+            $defaultvalues['completioncomplete' . $suffix]  = 1;
         }
     }
 }
