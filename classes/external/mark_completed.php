@@ -98,6 +98,7 @@ class mark_completed extends external_api {
 
         if ($existing) {
             // Already recorded — nothing more to do.
+            $completion->set_module_viewed($cm);
             $completion->update_state($cm, COMPLETION_COMPLETE, $USER->id);
             return [
                 'status'  => true,
@@ -111,6 +112,10 @@ class mark_completed extends external_api {
         $record->userid        = $USER->id;
         $record->timecompleted = time();
         $DB->insert_record('codeframe_completion', $record);
+
+        // Also mark as viewed now that the iframe completed.
+        // This ensures the "View" requirement is only checked off when the content is actually finished.
+        $completion->set_module_viewed($cm);
 
         // 5. Trigger Moodle's completion engine.
         // Now get_state() will find the row and return COMPLETION_COMPLETE.

@@ -55,8 +55,11 @@ $event->add_record_snapshot('codeframe', $codeframe);
 $event->trigger();
 
 // Mark viewed in the Completion API system (implements FEATURE_COMPLETION_TRACKS_VIEWS).
-$completion = new \completion_info($course);
-$completion->set_module_viewed($cm);
+// If "Require iframe completion" is enabled, we delay marking the view until the iframe completes.
+if (empty($codeframe->completioncomplete)) {
+    $completion = new \completion_info($course);
+    $completion->set_module_viewed($cm);
+}
 
 // Output page header.
 echo $OUTPUT->header();

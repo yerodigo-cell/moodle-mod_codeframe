@@ -143,6 +143,8 @@ function codeframe_supports($feature) {
             return true;
         case FEATURE_COMPLETION_HAS_RULES:
             return true;
+        case FEATURE_GRADE_HAS_GRADE:
+            return false;
         case FEATURE_MODEDIT_DEFAULT_COMPLETION:
             return true;
         case FEATURE_BACKUP_MOODLE2:
