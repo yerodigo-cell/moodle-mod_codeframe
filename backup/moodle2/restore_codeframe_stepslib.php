@@ -39,7 +39,7 @@ class restore_codeframe_activity_structure_step extends restore_activity_structu
         $paths = [];
 
         $paths[] = new restore_path_element('codeframe', '/activity/codeframe');
-        $paths[] = new restore_path_element('codeframe_completion', '/activity/codeframe/completions/completion');
+        $paths[] = new restore_path_element('codeframe_completion', '/activity/codeframe/codeframe_completions/codeframe_completion');
 
         return $this->prepare_activity_structure($paths);
     }
@@ -88,6 +88,6 @@ class restore_codeframe_activity_structure_step extends restore_activity_structu
     protected function after_execute() {
         // Add related files, e.g. the HTML package.
         $this->add_related_files('mod_codeframe', 'intro', null);
-        $this->add_related_files('mod_codeframe', 'package', null);
+        $this->add_related_files('mod_codeframe', 'content', 'codeframe');
     }
 }
