@@ -45,16 +45,19 @@ define(['core/ajax', 'core/log'], function(Ajax, Log) {
                                 var elements = completionRegion.querySelectorAll('*');
                                 elements.forEach(function(el) {
                                     var cls = el.className || '';
-                                    if (typeof cls === 'string' && (cls.indexOf('badge') > -1 || cls.indexOf('btn') > -1 || cls.indexOf('alert') > -1 || cls.indexOf('bg-') > -1)) {
+                                    if (typeof cls === 'string' && (cls.indexOf('badge') > -1 ||
+                                            cls.indexOf('btn') > -1 || cls.indexOf('alert') > -1 ||
+                                            cls.indexOf('bg-') > -1)) {
                                         el.style.setProperty('background-color', '#198754', 'important');
                                         el.style.setProperty('color', '#ffffff', 'important');
                                         el.style.setProperty('border-color', '#198754', 'important');
                                     }
                                 });
                                 var walker = document.createTreeWalker(completionRegion, NodeFilter.SHOW_TEXT, null, false);
-                                var node;
-                                while (node = walker.nextNode()) {
+                                var node = walker.nextNode();
+                                while (node) {
                                     node.nodeValue = node.nodeValue.replace('To do:', 'Done:').replace('Por hacer:', 'Hecho:');
+                                    node = walker.nextNode();
                                 }
                             }
                         }
