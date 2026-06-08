@@ -26,7 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['codeframe:addinstance']   = 'Add a new Codeframe activity';
 $string['codeframe:view']          = 'View Codeframe activity';
-$string['eventcoursemoduleviewed'] = 'Codeframe viewed';
 $string['completed']               = 'Completed';
 $string['completioncomplete']      = 'Require iframe completion';
 $string['completioncomplete_help'] = 'If enabled, the student must complete the activity within the embedded iframe (the iframe must send a codeframe_completed message) to mark this activity as complete.';
@@ -34,6 +33,7 @@ $string['completioninfo']          = '&#128274; <strong>Completion tracking:</st
 $string['embedcode']               = 'Presentation URL';
 $string['embedcode_help']          = 'Paste only the direct URL of the interactive content (e.g. https://example.com/slide). The plugin will automatically generate the embed code. You do not need to write any HTML.';
 $string['error_url_or_files']      = 'You must either provide a Presentation URL or upload HTML5 presentation files.';
+$string['eventcoursemoduleviewed'] = 'Codeframe viewed';
 $string['modulename']              = 'Codeframe';
 $string['modulename_help']         = 'The Codeframe activity module allows teachers to embed external content, such as interactive presentations, via iframe and automatically track completion through window postMessages.';
 $string['modulenameplural']        = 'Codeframe Activities';

@@ -26,7 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['codeframe:addinstance']   = 'Añadir una nueva actividad Codeframe';
 $string['codeframe:view']          = 'Ver actividad Codeframe';
-$string['eventcoursemoduleviewed'] = 'Codeframe visto';
 $string['completed']               = 'Completado';
 $string['completioncomplete']      = 'Requerir finalización del iframe';
 $string['completioncomplete_help'] = 'Si está habilitado, el estudiante debe completar la actividad interactiva (el iframe debe enviar el mensaje "codeframe_completed") para marcar esta actividad de Moodle como completada.';
@@ -34,6 +33,7 @@ $string['completioninfo']          = '&#128274; <strong>Rastreo de finalización
 $string['embedcode']               = 'URL de la presentación / Código';
 $string['embedcode_help']          = 'Pega la URL directa del contenido interactivo (ej. https://ejemplo.com/slide). El plugin generará automáticamente el código iframe. También puedes pegar el código iframe directamente.';
 $string['error_url_or_files']      = 'Debes proporcionar una URL o subir archivos de presentación HTML5.';
+$string['eventcoursemoduleviewed'] = 'Codeframe visto';
 $string['modulename']              = 'Codeframe';
 $string['modulename_help']         = 'El módulo de actividad Codeframe permite a los profesores incrustar contenido externo, como presentaciones interactivas, mediante un iframe y rastrear automáticamente la finalización a través de window postMessages.';
 $string['modulenameplural']        = 'Actividades Codeframe';
