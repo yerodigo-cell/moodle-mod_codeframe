@@ -42,6 +42,15 @@ class course_module_viewed extends \core\event\course_module_viewed {
     }
 
     /**
+     * Returns description of what happened.
+     *
+     * @return string
+     */
+    public static function get_name() {
+        return get_string('eventcoursemoduleviewed', 'mod_codeframe');
+    }
+
+    /**
      * Map objectid to the codeframe table.
      * Required by Moodle's event mapping and plugins like Level Up XP.
      *

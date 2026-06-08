@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['codeframe:addinstance']   = 'Añadir una nueva actividad Codeframe';
+$string['eventcoursemoduleviewed'] = 'Codeframe visto';
 $string['codeframe:view']          = 'Ver actividad Codeframe';
 $string['completed']               = 'Completado';
 $string['completioncomplete']      = 'Requerir finalización del iframe';
