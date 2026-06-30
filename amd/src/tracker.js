@@ -1,3 +1,18 @@
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
 /**
  * JavaScript tracking module for Codeframe activity.
  *
@@ -5,7 +20,7 @@
  * @copyright  2026 Yeison Diaz
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['core/ajax', 'core/log'], function(Ajax, Log) {
+define(['core/ajax', 'core/log', 'core/str'], function(Ajax, Log, Str) {
     return {
         /**
          * Initialize the event listener for window messages.
@@ -53,12 +68,19 @@ define(['core/ajax', 'core/log'], function(Ajax, Log) {
                                         el.style.setProperty('border-color', '#198754', 'important');
                                     }
                                 });
-                                var walker = document.createTreeWalker(completionRegion, NodeFilter.SHOW_TEXT, null, false);
-                                var node = walker.nextNode();
-                                while (node) {
-                                    node.nodeValue = node.nodeValue.replace('To do:', 'Done:').replace('Por hacer:', 'Hecho:');
-                                    node = walker.nextNode();
-                                }
+                                Str.get_strings([
+                                    {key: 'todo', component: 'mod_codeframe'},
+                                    {key: 'done', component: 'mod_codeframe'}
+                                ]).done(function(strings) {
+                                    var todoStr = strings[0];
+                                    var doneStr = strings[1];
+                                    var walker = document.createTreeWalker(completionRegion, NodeFilter.SHOW_TEXT, null, false);
+                                    var node = walker.nextNode();
+                                    while (node) {
+                                        node.nodeValue = node.nodeValue.replace(todoStr, doneStr);
+                                        node = walker.nextNode();
+                                    }
+                                });
                             }
                         }
                         return result;

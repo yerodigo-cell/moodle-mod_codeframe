@@ -51,3 +51,10 @@ $string['student']                 = 'Student';
 $string['timecompleted']           = 'Time completed';
 $string['uploadfiles']             = 'Or upload HTML5 presentation files';
 $string['uploadfiles_help']        = 'Upload a folder or a zip containing your HTML5 content (images, JS, CSS, audio, etc.). The main file must be named "index.html" (or another .html file) at the root level.';
+
+// Completion strings
+$string['error_completion_not_enabled'] = 'Completion tracking is not enabled for this activity.';
+$string['already_completed'] = 'Activity was already marked as complete.';
+$string['success_completed'] = 'Activity successfully marked as complete.';
+$string['todo'] = 'To do:';
+$string['done'] = 'Done:';

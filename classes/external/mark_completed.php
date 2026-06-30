@@ -84,7 +84,7 @@ class mark_completed extends external_api {
         if (!$completion->is_enabled($cm)) {
             return [
                 'status'  => false,
-                'message' => 'Completion tracking is not enabled for this activity.',
+                'message' => get_string('error_completion_not_enabled', 'mod_codeframe'),
             ];
         }
 
@@ -102,7 +102,7 @@ class mark_completed extends external_api {
             $completion->update_state($cm, COMPLETION_COMPLETE, $USER->id);
             return [
                 'status'  => true,
-                'message' => 'Activity was already marked as complete.',
+                'message' => get_string('already_completed', 'mod_codeframe'),
             ];
         }
 
@@ -123,7 +123,7 @@ class mark_completed extends external_api {
 
         return [
             'status'  => true,
-            'message' => 'Activity successfully marked as complete.',
+            'message' => get_string('success_completed', 'mod_codeframe'),
         ];
     }
 

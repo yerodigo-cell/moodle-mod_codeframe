@@ -69,20 +69,25 @@ echo $OUTPUT->header();
 // .codeframe_wrapper    → maintains 16:9 aspect ratio via padding-bottom trick
 // codeframe_build_embed_html() converts a plain URL into an iframe automatically,
 // and also supports legacy activities that already stored raw HTML.
-echo html_writer::start_div('codeframe_container', ['id' => 'codeframeembed']);
+$templatedata = [
+    'paddingbottom' => false,
+    'iframecontent' => false,
+    'haserror' => false,
+    'error' => '',
+    'url' => '',
+    'cmid' => $cm->id,
+    'courseid' => $course->id,
+];
 
-$wrapperattributes = [];
 // Google Slides adds exactly a 29px control bar to the bottom of the iframe player.
 // To prevent 16:9 slides from being letterboxed (black bars on the sides) to fit this bar,
 // we dynamically add 29px of vertical space to the wrapper's 16:9 calculation.
 if (strpos($codeframe->embedcode, 'docs.google.com/presentation') !== false) {
-    $wrapperattributes['style'] = 'padding-bottom: calc(56.25% + 29px);';
+    $templatedata['paddingbottom'] = 'calc(56.25% + 29px)';
 }
 
-echo html_writer::start_div('codeframe_wrapper', $wrapperattributes);
-
 if (trim($codeframe->embedcode) !== '') {
-    echo codeframe_build_embed_html($codeframe->embedcode);
+    $templatedata['iframecontent'] = codeframe_build_embed_html($codeframe->embedcode);
 } else {
     // Scan Moodle's storage for uploaded HTML5 files.
     $fs = get_file_storage();
@@ -117,24 +122,14 @@ if (trim($codeframe->embedcode) !== '') {
             $mainfile->get_filepath(),
             $mainfile->get_filename()
         );
-        echo '<iframe'
-            . ' src="' . $url . '"'
-            . ' width="100%"'
-            . ' height="100%"'
-            . ' frameborder="0"'
-            . ' allow="autoplay; fullscreen; encrypted-media"'
-            . ' style="border:0;"'
-            . '></iframe>';
+        $templatedata['url'] = $url->out(false);
     } else {
-        echo html_writer::div(get_string('nohtmlfile', 'mod_codeframe'), 'alert alert-danger');
+        $templatedata['haserror'] = true;
+        $templatedata['error'] = get_string('nohtmlfile', 'mod_codeframe');
     }
 }
 
-echo html_writer::end_div(); // End of .codeframe_wrapper.
-echo html_writer::end_div(); // End of .codeframe_container.
-
-// Initialize the AMD tracking script, passing cmid and courseid as parameters.
-$PAGE->requires->js_call_amd('mod_codeframe/tracker', 'init', [$cm->id, $course->id]);
+echo $OUTPUT->render_from_template('mod_codeframe/view_page', $templatedata);
 
 // Output page footer.
 echo $OUTPUT->footer();
