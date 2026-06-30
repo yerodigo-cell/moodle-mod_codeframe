@@ -20,15 +20,11 @@
  * @copyright  2026 Yeison Diaz
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['core/ajax', 'core/log', 'core/str'], function(Ajax, Log, Str) {
-    return {
-        /**
-         * Initialize the event listener for window messages.
-         *
-         * @param {number} cmid The course module ID.
-         * @param {number} courseid The course ID.
-         */
-        init: function(cmid, courseid) {
+import Ajax from 'core/ajax';
+import Log from 'core/log';
+import Str from 'core/str';
+
+export const init = (cmid, courseid) => {
             Log.debug('Codeframe tracker AMD module initialized for CMID: ' + cmid);
 
             window.addEventListener('message', function(event) {
@@ -89,6 +85,4 @@ define(['core/ajax', 'core/log', 'core/str'], function(Ajax, Log, Str) {
                     });
                 }
             });
-        }
-    };
-});
+};
