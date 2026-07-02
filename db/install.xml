@@ -35,5 +35,21 @@
         <INDEX NAME="cmid_userid" UNIQUE="true" FIELDS="cmid, userid" COMMENT="Unique index preventing duplicate completion entries per user per activity"/>
       </INDEXES>
     </TABLE>
+
+    <TABLE NAME="codeframe_time" COMMENT="Tracks time spent viewing codeframe activities">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Primary key"/>
+        <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course module ID of the codeframe activity"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the user viewing the iframe"/>
+        <FIELD NAME="last_session_duration" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Duration in seconds of the last session"/>
+        <FIELD NAME="last_ping" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp of the last ping"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for codeframe_time"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="cmid_userid" UNIQUE="true" FIELDS="cmid, userid" COMMENT="Unique index preventing duplicate time tracking entries per user per activity"/>
+      </INDEXES>
+    </TABLE>
   </TABLES>
 </XMLDB>

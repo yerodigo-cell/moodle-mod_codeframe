@@ -75,5 +75,25 @@ function xmldb_codeframe_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2026052801, 'codeframe');
     }
 
+    // Upgrade step: Add the codeframe_time table.
+    if ($oldversion < 2026070101) {
+        $table = new xmldb_table('codeframe_time');
+        
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('cmid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('last_session_duration', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('last_ping', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_index('cmid_userid', XMLDB_INDEX_UNIQUE, ['cmid', 'userid']);
+
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        upgrade_mod_savepoint(true, 2026070101, 'codeframe');
+    }
+
     return true;
 }
