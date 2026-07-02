@@ -54,28 +54,28 @@ if (!$record) {
     $record->last_ping = $now;
     $DB->insert_record('codeframe_time', $record);
 } else {
-    $time_since_last_ping = $now - $record->last_ping;
+    $timesincelastping = $now - $record->last_ping;
 
     // Ensure total_duration exists on old records.
     if (!isset($record->total_duration)) {
         $record->total_duration = $record->last_session_duration;
     }
-    
+
     // Ensure time_started exists on old records (fallback to last_ping if 0).
     if (!isset($record->time_started) || $record->time_started == 0) {
         $record->time_started = $record->last_ping;
     }
 
-    if ($time_since_last_ping > $pinginterval) {
-        // More than 30s passed -> New session
+    if ($timesincelastping > $pinginterval) {
+        // More than 30s passed -> New session.
         $record->last_session_duration = 10;
         $record->total_duration += 10;
     } else {
-        // Same session
-        $record->last_session_duration += $time_since_last_ping;
-        $record->total_duration += $time_since_last_ping;
+        // Same session.
+        $record->last_session_duration += $timesincelastping;
+        $record->total_duration += $timesincelastping;
     }
-    
+
     $record->last_ping = $now;
     $DB->update_record('codeframe_time', $record);
 }

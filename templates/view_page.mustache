@@ -78,7 +78,9 @@ require(['mod_codeframe/tracker'], function(tracker) {
     var wrapper = btn ? btn.closest('.codeframe_wrapper') : null;
 
     // If the button wasn't rendered (e.g. raw iframecontent), we do nothing.
-    if (!btn || !wrapper) return;
+    if (!btn || !wrapper) {
+        return;
+    }
 
     var iconMaximize = btn.querySelector('.icon-maximize');
     var iconMinimize = btn.querySelector('.icon-minimize');
@@ -116,13 +118,21 @@ require(['mod_codeframe/tracker'], function(tracker) {
         // because multiple codeframes might exist on the page.
         if (isFullscreen === wrapper) {
             wrapper.classList.add('is-fullscreen');
-            if (iconMaximize) iconMaximize.style.display = 'none';
-            if (iconMinimize) iconMinimize.style.display = 'block';
+            if (iconMaximize) {
+                iconMaximize.style.display = 'none';
+            }
+            if (iconMinimize) {
+                iconMinimize.style.display = 'block';
+            }
         } else if (!isFullscreen) {
             // When exiting fullscreen, remove class from all wrappers just in case
             wrapper.classList.remove('is-fullscreen');
-            if (iconMaximize) iconMaximize.style.display = 'block';
-            if (iconMinimize) iconMinimize.style.display = 'none';
+            if (iconMaximize) {
+                iconMaximize.style.display = 'block';
+            }
+            if (iconMinimize) {
+                iconMinimize.style.display = 'none';
+            }
         }
     };
 
@@ -140,7 +150,9 @@ require(['mod_codeframe/tracker'], function(tracker) {
         iframe.addEventListener('load', function() {
             try {
                 var cw = iframe.contentWindow;
-                if (!cw) return;
+                if (!cw) {
+                    return;
+                }
 
                 cw.alert = function(msg) {
                     // Post a message to parent so we can show a Moodle notification

@@ -80,7 +80,12 @@ if (empty($students)) {
     require_once(__DIR__ . '/lib.php');
     codeframe_ensure_time_table_exists();
     if ($DB->get_manager()->table_exists('codeframe_time')) {
-        $timetracks = $DB->get_records('codeframe_time', ['cmid' => $cm->id], '', 'userid, time_started, total_duration, last_session_duration');
+        $timetracks = $DB->get_records(
+            'codeframe_time', 
+            ['cmid' => $cm->id], 
+            '', 
+            'userid, time_started, total_duration, last_session_duration'
+        );
     }
 
     // Build the table using flexible_table for sorting capabilities.
@@ -96,12 +101,12 @@ if (empty($students)) {
         get_string('completed', 'mod_codeframe'),
         get_string('duration', 'mod_codeframe'),
     ]);
-    
+
     $table->sortable(true, 'fullname');
     $table->set_attribute('class', 'generaltable mt-4');
     $table->setup();
 
-    // Initialize core completion info
+    // Initialize core completion info.
     $completion = new \completion_info($course);
 
     $rows = [];
@@ -118,7 +123,8 @@ if (empty($students)) {
         $cdata = $completion->get_data($cm, false, $student->id);
         $corecompleted = false;
         if (isset($cdata->completionstate)) {
-            $corecompleted = ($cdata->completionstate == COMPLETION_COMPLETE || $cdata->completionstate == COMPLETION_COMPLETE_PASS);
+            $corecompleted = ($cdata->completionstate == COMPLETION_COMPLETE 
+                || $cdata->completionstate == COMPLETION_COMPLETE_PASS);
         }
         $customcompleted = isset($completions[$student->id]);
         $hascompleted = $corecompleted || $customcompleted;
