@@ -71,7 +71,7 @@ export const init = (cmid, courseid) => {
                                     ]).done(function(strings) {
                                         var todoStr = strings[0];
                                         var doneStr = strings[1];
-                                        
+
                                         var listItems = completionRegion.querySelectorAll('li');
                                         if (listItems.length > 0) {
                                             // Moodle 5.2 style
@@ -81,7 +81,12 @@ export const init = (cmid, courseid) => {
                                             });
                                         } else {
                                             // Moodle 4.5 - 5.1 style fallback text replacement
-                                            var walker = document.createTreeWalker(completionRegion, NodeFilter.SHOW_TEXT, null, false);
+                                            var walker = document.createTreeWalker(
+                                                completionRegion,
+                                                NodeFilter.SHOW_TEXT,
+                                                null,
+                                                false
+                                            );
                                             var node = walker.nextNode();
                                             while (node) {
                                                 node.nodeValue = node.nodeValue.replace(todoStr, doneStr);
