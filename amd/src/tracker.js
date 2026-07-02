@@ -20,9 +20,9 @@
  * @copyright  2026 Yeison Diaz
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import Ajax from 'core/ajax';
-import Log from 'core/log';
-import Str from 'core/str';
+import * as Ajax from 'core/ajax';
+import * as Log from 'core/log';
+import * as Str from 'core/str';
 
 export const init = (cmid, courseid) => {
             Log.debug('Codeframe tracker AMD module initialized for CMID: ' + cmid);
@@ -56,6 +56,7 @@ export const init = (cmid, courseid) => {
                                     var elements = completionRegion.querySelectorAll('*');
                                     elements.forEach(function(el) {
                                         var cls = el.className || '';
+                                        // Moodle 4.5 - 5.1 badge styles
                                         if (typeof cls === 'string' && (cls.indexOf('badge') > -1 ||
                                                 cls.indexOf('btn') > -1 || cls.indexOf('alert') > -1 ||
                                                 cls.indexOf('bg-') > -1)) {
@@ -70,11 +71,22 @@ export const init = (cmid, courseid) => {
                                     ]).done(function(strings) {
                                         var todoStr = strings[0];
                                         var doneStr = strings[1];
-                                        var walker = document.createTreeWalker(completionRegion, NodeFilter.SHOW_TEXT, null, false);
-                                        var node = walker.nextNode();
-                                        while (node) {
-                                            node.nodeValue = node.nodeValue.replace(todoStr, doneStr);
-                                            node = walker.nextNode();
+                                        
+                                        var listItems = completionRegion.querySelectorAll('li');
+                                        if (listItems.length > 0) {
+                                            // Moodle 5.2 style
+                                            listItems.forEach(function(li) {
+                                                li.style.setProperty('color', '#198754', 'important');
+                                                li.style.setProperty('font-weight', 'bold', 'important');
+                                            });
+                                        } else {
+                                            // Moodle 4.5 - 5.1 style fallback text replacement
+                                            var walker = document.createTreeWalker(completionRegion, NodeFilter.SHOW_TEXT, null, false);
+                                            var node = walker.nextNode();
+                                            while (node) {
+                                                node.nodeValue = node.nodeValue.replace(todoStr, doneStr);
+                                                node = walker.nextNode();
+                                            }
                                         }
                                     });
                                 }
