@@ -126,13 +126,13 @@ body#page-mod-codeframe-view .codeframe_wrapper iframe {
 .codeframe_wrapper:has(iframe[src*="canva.com"]) .codeframe-fullscreen-btn,
 .codeframe_wrapper:has(iframe[src*="genial.ly"]) .codeframe-fullscreen-btn,
 .codeframe_wrapper:has(iframe[src*="genially.com"]) .codeframe-fullscreen-btn {
-    display: none !important;
+    display: none;
 }
 
 /* ── Fullscreen state ────────────────────────────────────────────────────── */
-.codeframe_wrapper.is-fullscreen {
-    padding-bottom: 0 !important;
-    height: 100vh !important;
-    width: 100vw !important;
-    border-radius: 0 !important;
+body#page-mod-codeframe-view .codeframe_wrapper.is-fullscreen {
+    padding-bottom: 0;
+    height: 100vh;
+    width: 100vw;
+    border-radius: 0;
 }

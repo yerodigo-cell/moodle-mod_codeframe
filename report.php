@@ -116,17 +116,19 @@ if (empty($students)) {
 
         // Determine completion status using Moodle core and plugin custom table as fallback.
         $cdata = $completion->get_data($cm, false, $student->id);
-        $corecompleted = (isset($cdata->completionstate) && ($cdata->completionstate == COMPLETION_COMPLETE || $cdata->completionstate == COMPLETION_COMPLETE_PASS));
+        $corecompleted = false;
+        if (isset($cdata->completionstate)) {
+            $corecompleted = ($cdata->completionstate == COMPLETION_COMPLETE || $cdata->completionstate == COMPLETION_COMPLETE_PASS);
+        }
         $customcompleted = isset($completions[$student->id]);
-        
         $hascompleted = $corecompleted || $customcompleted;
         $hasstarted = isset($timetracks[$student->id]) && $timetracks[$student->id]->time_started > 0;
 
         $timecompleted = '-';
-        $timecompleted_timestamp = 0;
+        $timecompletedtimestamp = 0;
         $timestarted = '-';
         $duration = '-';
-        $duration_seconds = 0;
+        $durationseconds = 0;
 
         if ($hasstarted) {
             $timestarted = userdate($timetracks[$student->id]->time_started);
@@ -137,36 +139,34 @@ if (empty($students)) {
             $icon = '&#10004; ' . $statustext;
             $class = 'badge badge-success bg-success text-white px-2 py-1';
             $statushtml = html_writer::span($icon, $class, ['style' => 'font-size:14px;']);
-            
             if ($corecompleted && !empty($cdata->timemodified)) {
                 $timecompleted = userdate($cdata->timemodified);
-                $timecompleted_timestamp = $cdata->timemodified;
-            } elseif ($customcompleted) {
+                $timecompletedtimestamp = $cdata->timemodified;
+            } else if ($customcompleted) {
                 $timecompleted = userdate($completions[$student->id]->timecompleted);
-                $timecompleted_timestamp = $completions[$student->id]->timecompleted;
+                $timecompletedtimestamp = $completions[$student->id]->timecompleted;
             }
 
             // Format completed duration.
             if ($customcompleted && isset($completions[$student->id]->time_spent) && $completions[$student->id]->time_spent > 0) {
-                $duration_seconds = $completions[$student->id]->time_spent;
-                $mins = floor($duration_seconds / 60);
-                $secs = $duration_seconds % 60;
+                $durationseconds = $completions[$student->id]->time_spent;
+                $mins = floor($durationseconds / 60);
+                $secs = $durationseconds % 60;
                 if ($mins > 0) {
                     $duration = $mins . ' mins ' . $secs . ' secs';
                 } else {
                     $duration = $secs . ' secs';
                 }
             }
-        } elseif ($hasstarted) {
+        } else if ($hasstarted) {
             $statustext = get_string('inprogress', 'mod_codeframe');
             $class = 'badge badge-primary bg-primary text-white px-2 py-1';
             $statushtml = html_writer::span($statustext, $class, ['style' => 'font-size:14px;']);
-            
             // Format current total duration.
             if (isset($timetracks[$student->id]->total_duration) && $timetracks[$student->id]->total_duration > 0) {
-                $duration_seconds = $timetracks[$student->id]->total_duration;
-                $mins = floor($duration_seconds / 60);
-                $secs = $duration_seconds % 60;
+                $durationseconds = $timetracks[$student->id]->total_duration;
+                $mins = floor($durationseconds / 60);
+                $secs = $durationseconds % 60;
                 if ($mins > 0) {
                     $duration = $mins . ' mins ' . $secs . ' secs';
                 } else {
@@ -185,8 +185,8 @@ if (empty($students)) {
         $row->email_sort = $student->email;
         $row->status_sort = $hascompleted ? 3 : ($hasstarted ? 2 : 1);
         $row->started_sort = $hasstarted ? $timetracks[$student->id]->time_started : 0;
-        $row->completed_sort = $timecompleted_timestamp;
-        $row->duration_sort = $duration_seconds;
+        $row->completed_sort = $timecompletedtimestamp;
+        $row->duration_sort = $durationseconds;
 
         $row->display = [
             $studentcell,
@@ -196,7 +196,6 @@ if (empty($students)) {
             $timecompleted,
             $duration,
         ];
-        
         $rows[] = $row;
     }
 
@@ -205,8 +204,7 @@ if (empty($students)) {
     if (empty($sortcolumns)) {
         $sortcolumns = ['fullname' => SORT_ASC];
     }
-    
-    usort($rows, function($a, $b) use ($sortcolumns) {
+    usort($rows, function ($a, $b) use ($sortcolumns) {
         foreach ($sortcolumns as $column => $direction) {
             $sortkey = $column . '_sort';
             if (!isset($a->$sortkey) || !isset($b->$sortkey) || $a->$sortkey == $b->$sortkey) {

@@ -76,7 +76,7 @@ require(['mod_codeframe/tracker'], function(tracker) {
     // Find the wrapper by traversing up from the button, or by ID if we give it one.
     // Since we didn't give wrapper an ID, let's find the parent wrapper.
     var wrapper = btn ? btn.closest('.codeframe_wrapper') : null;
-    
+
     // If the button wasn't rendered (e.g. raw iframecontent), we do nothing.
     if (!btn || !wrapper) return;
 
@@ -111,7 +111,7 @@ require(['mod_codeframe/tracker'], function(tracker) {
 
     var handleFullscreenChange = function() {
         var isFullscreen = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
-        
+
         // We must check if THIS specific wrapper is the one currently in fullscreen,
         // because multiple codeframes might exist on the page.
         if (isFullscreen === wrapper) {
@@ -168,8 +168,10 @@ require(['mod_codeframe/tracker'], function(tracker) {
             require(['core/notification', 'core/str'], function(Notification, Str) {
                 Str.get_string('info', 'moodle').then(function(title) {
                     Notification.alert(title, event.data.message, 'OK');
+                    return;
                 }).catch(function() {
                     Notification.alert('Info', event.data.message, 'OK');
+                    return;
                 });
             });
         }

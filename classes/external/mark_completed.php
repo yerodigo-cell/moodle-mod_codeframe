@@ -113,7 +113,10 @@ class mark_completed extends external_api {
         $record->timecompleted = time();
 
         $timetrack = $DB->get_record('codeframe_time', ['cmid' => $cm->id, 'userid' => $USER->id]);
-        $record->time_spent = $timetrack ? (isset($timetrack->total_duration) ? $timetrack->total_duration : $timetrack->last_session_duration) : 0;
+        $record->time_spent = 0;
+        if ($timetrack) {
+            $record->time_spent = isset($timetrack->total_duration) ? $timetrack->total_duration : $timetrack->last_session_duration;
+        }
 
         $DB->insert_record('codeframe_completion', $record);
 
