@@ -359,7 +359,7 @@ function codeframe_get_completion_state($course, $cm, $userid, $type) {
 function codeframe_ensure_time_table_exists() {
     global $DB;
     $dbman = $DB->get_manager();
-    
+
     if (!$dbman->table_exists('codeframe_time')) {
         $table = new xmldb_table('codeframe_time');
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
@@ -374,21 +374,21 @@ function codeframe_ensure_time_table_exists() {
         $dbman->create_table($table);
     }
 
-    // Ensure codeframe_time has total_duration
+    // Ensure codeframe_time has total_duration.
     if ($dbman->table_exists('codeframe_time')) {
         $table = new xmldb_table('codeframe_time');
         $field = new xmldb_field('total_duration', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
-        
+
         $field2 = new xmldb_field('time_started', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         if (!$dbman->field_exists($table, $field2)) {
             $dbman->add_field($table, $field2);
         }
     }
 
-    // Ensure codeframe_completion has time_spent
+    // Ensure codeframe_completion has time_spent.
     if ($dbman->table_exists('codeframe_completion')) {
         $table = new xmldb_table('codeframe_completion');
         $field = new xmldb_field('time_spent', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
