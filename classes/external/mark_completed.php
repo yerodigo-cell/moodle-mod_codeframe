@@ -111,6 +111,10 @@ class mark_completed extends external_api {
         $record->cmid          = $cm->id;
         $record->userid        = $USER->id;
         $record->timecompleted = time();
+
+        $timetrack = $DB->get_record('codeframe_time', ['cmid' => $cm->id, 'userid' => $USER->id]);
+        $record->time_spent = $timetrack ? (isset($timetrack->total_duration) ? $timetrack->total_duration : $timetrack->last_session_duration) : 0;
+
         $DB->insert_record('codeframe_completion', $record);
 
         // Also mark as viewed now that the iframe completed.

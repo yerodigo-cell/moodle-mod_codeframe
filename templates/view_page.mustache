@@ -49,9 +49,20 @@
                 <div class="alert alert-danger">{{error}}</div>
             {{/haserror}}
             {{^haserror}}
-                <iframe src="{{url}}" allow="autoplay; fullscreen; encrypted-media" style="width: 100%; height: 100%; border: 0;"></iframe>
+                <iframe id="codeframe_iframe_{{cmid}}" src="{{url}}" allow="autoplay; fullscreen; encrypted-media" style="width: 100%; height: 100%; border: 0;"></iframe>
             {{/haserror}}
         {{/iframecontent}}
+        
+        {{^haserror}}
+        <button id="codeframe_fullscreen_btn_{{cmid}}" class="codeframe-fullscreen-btn" title="{{#str}}fullscreen, mod_codeframe{{/str}}" aria-label="Toggle Fullscreen">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-maximize">
+                <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+            </svg>
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-minimize" style="display:none;">
+                <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path>
+            </svg>
+        </button>
+        {{/haserror}}
     </div>
 </div>
 
@@ -59,4 +70,109 @@
 require(['mod_codeframe/tracker'], function(tracker) {
     tracker.init({{{cmid}}}, {{{courseid}}});
 });
+
+(function() {
+    var btn = document.getElementById('codeframe_fullscreen_btn_{{cmid}}');
+    // Find the wrapper by traversing up from the button, or by ID if we give it one.
+    // Since we didn't give wrapper an ID, let's find the parent wrapper.
+    var wrapper = btn ? btn.closest('.codeframe_wrapper') : null;
+    
+    // If the button wasn't rendered (e.g. raw iframecontent), we do nothing.
+    if (!btn || !wrapper) return;
+
+    var iconMaximize = btn.querySelector('.icon-maximize');
+    var iconMinimize = btn.querySelector('.icon-minimize');
+
+    btn.addEventListener('click', function() {
+        if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+            // Enter fullscreen
+            if (wrapper.requestFullscreen) {
+                wrapper.requestFullscreen();
+            } else if (wrapper.msRequestFullscreen) {
+                wrapper.msRequestFullscreen();
+            } else if (wrapper.mozRequestFullScreen) {
+                wrapper.mozRequestFullScreen();
+            } else if (wrapper.webkitRequestFullscreen) {
+                wrapper.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            }
+        } else {
+            // Exit fullscreen
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+        }
+    });
+
+    var handleFullscreenChange = function() {
+        var isFullscreen = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+        
+        // We must check if THIS specific wrapper is the one currently in fullscreen,
+        // because multiple codeframes might exist on the page.
+        if (isFullscreen === wrapper) {
+            wrapper.classList.add('is-fullscreen');
+            if (iconMaximize) iconMaximize.style.display = 'none';
+            if (iconMinimize) iconMinimize.style.display = 'block';
+        } else if (!isFullscreen) {
+            // When exiting fullscreen, remove class from all wrappers just in case
+            wrapper.classList.remove('is-fullscreen');
+            if (iconMaximize) iconMaximize.style.display = 'block';
+            if (iconMinimize) iconMinimize.style.display = 'none';
+        }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+    // Bug Safari: If an iframe calls alert() while in fullscreen, Safari crashes with a black screen.
+    // Since uploaded HTMLs are same-origin, we can override their alert/confirm functions.
+    // Even exiting fullscreen before alert() can crash Safari if DOM mutations happen concurrently,
+    // so we will completely replace the native alert() with Moodle's beautiful non-blocking UI modals!
+    var iframe = document.getElementById('codeframe_iframe_{{cmid}}');
+    if (iframe) {
+        iframe.addEventListener('load', function() {
+            try {
+                var cw = iframe.contentWindow;
+                if (!cw) return;
+
+                cw.alert = function(msg) {
+                    // Post a message to parent so we can show a Moodle notification
+                    window.postMessage({
+                        type: 'codeframe_custom_alert',
+                        message: msg
+                    }, '*');
+                };
+
+                // Confirm is trickier because it must return a boolean synchronously.
+                // We will leave it as is, since intercepting without blocking is complex.
+                var originalConfirm = cw.confirm;
+                cw.confirm = function(msg) {
+                    return originalConfirm(msg);
+                };
+            } catch (e) {
+                // Ignore cross-origin errors
+            }
+        });
+    }
+
+    // Listen for our custom alert message
+    window.addEventListener('message', function(event) {
+        if (event.data && event.data.type === 'codeframe_custom_alert') {
+            require(['core/notification', 'core/str'], function(Notification, Str) {
+                Str.get_string('info', 'moodle').then(function(title) {
+                    Notification.alert(title, event.data.message, 'OK');
+                }).catch(function() {
+                    Notification.alert('Info', event.data.message, 'OK');
+                });
+            });
+        }
+    });
+})();
 {{/js}}

@@ -63,17 +63,48 @@ if (empty($students)) {
     echo html_writer::div(get_string('nostudents', 'mod_codeframe'), 'alert alert-info mt-3');
 } else {
     // Fetch all completions for this activity to avoid querying inside the loop.
-    $completions = $DB->get_records('codeframe_completion', ['cmid' => $cm->id], '', 'userid, timecompleted');
+    $completions = $DB->get_records('codeframe_completion', ['cmid' => $cm->id], '', 'userid, timecompleted, time_spent');
 
-    // Build the table.
-    $table = new html_table();
-    $table->attributes['class'] = 'generaltable mt-4';
-    $table->head = [
-        get_string('student', 'mod_codeframe'),
+    // Fetch last accesses from standard logstore if it exists.
+    $lastaccesses = [];
+    if ($DB->get_manager()->table_exists('logstore_standard_log')) {
+        $sql = "SELECT userid, MAX(timecreated) AS lastaccess
+                  FROM {logstore_standard_log}
+                 WHERE contextid = :contextid
+              GROUP BY userid";
+        $lastaccesses = $DB->get_records_sql($sql, ['contextid' => $context->id]);
+    }
+
+    // Fetch time tracking data.
+    $timetracks = [];
+    require_once(__DIR__ . '/lib.php');
+    codeframe_ensure_time_table_exists();
+    if ($DB->get_manager()->table_exists('codeframe_time')) {
+        $timetracks = $DB->get_records('codeframe_time', ['cmid' => $cm->id], '', 'userid, time_started, total_duration, last_session_duration');
+    }
+
+    // Build the table using flexible_table for sorting capabilities.
+    require_once($CFG->libdir . '/tablelib.php');
+    $table = new flexible_table('mod-codeframe-report-' . $cm->id);
+    $table->define_baseurl($url);
+    $table->define_columns(['fullname', 'email', 'status', 'started', 'completed', 'duration']);
+    $table->define_headers([
+        get_string('fullname'),
         get_string('email'),
         get_string('status', 'mod_codeframe'),
-        get_string('timecompleted', 'mod_codeframe'),
-    ];
+        get_string('started', 'mod_codeframe'),
+        get_string('completed', 'mod_codeframe'),
+        get_string('duration', 'mod_codeframe'),
+    ]);
+    
+    $table->sortable(true, 'fullname');
+    $table->set_attribute('class', 'generaltable mt-4');
+    $table->setup();
+
+    // Initialize core completion info
+    $completion = new \completion_info($course);
+
+    $rows = [];
 
     foreach ($students as $student) {
         // Render student picture and name.
@@ -83,32 +114,115 @@ if (empty($students)) {
         $fullname = fullname($student);
         $studentcell = html_writer::div($picturehtml . ' ' . $fullname, 'd-flex align-items-center gap-2');
 
-        // Determine completion status.
-        $hascompleted = isset($completions[$student->id]);
+        // Determine completion status using Moodle core and plugin custom table as fallback.
+        $cdata = $completion->get_data($cm, false, $student->id);
+        $corecompleted = (isset($cdata->completionstate) && ($cdata->completionstate == COMPLETION_COMPLETE || $cdata->completionstate == COMPLETION_COMPLETE_PASS));
+        $customcompleted = isset($completions[$student->id]);
+        
+        $hascompleted = $corecompleted || $customcompleted;
+        $hasstarted = isset($timetracks[$student->id]) && $timetracks[$student->id]->time_started > 0;
+
+        $timecompleted = '-';
+        $timecompleted_timestamp = 0;
+        $timestarted = '-';
+        $duration = '-';
+        $duration_seconds = 0;
+
+        if ($hasstarted) {
+            $timestarted = userdate($timetracks[$student->id]->time_started);
+        }
 
         if ($hascompleted) {
-            $statustext = get_string('completed', 'mod_codeframe');
+            $statustext = get_string('finished', 'mod_codeframe');
             $icon = '&#10004; ' . $statustext;
             $class = 'badge badge-success bg-success text-white px-2 py-1';
             $statushtml = html_writer::span($icon, $class, ['style' => 'font-size:14px;']);
-            $timecompleted = userdate($completions[$student->id]->timecompleted);
+            
+            if ($corecompleted && !empty($cdata->timemodified)) {
+                $timecompleted = userdate($cdata->timemodified);
+                $timecompleted_timestamp = $cdata->timemodified;
+            } elseif ($customcompleted) {
+                $timecompleted = userdate($completions[$student->id]->timecompleted);
+                $timecompleted_timestamp = $completions[$student->id]->timecompleted;
+            }
+
+            // Format completed duration.
+            if ($customcompleted && isset($completions[$student->id]->time_spent) && $completions[$student->id]->time_spent > 0) {
+                $duration_seconds = $completions[$student->id]->time_spent;
+                $mins = floor($duration_seconds / 60);
+                $secs = $duration_seconds % 60;
+                if ($mins > 0) {
+                    $duration = $mins . ' mins ' . $secs . ' secs';
+                } else {
+                    $duration = $secs . ' secs';
+                }
+            }
+        } elseif ($hasstarted) {
+            $statustext = get_string('inprogress', 'mod_codeframe');
+            $class = 'badge badge-primary bg-primary text-white px-2 py-1';
+            $statushtml = html_writer::span($statustext, $class, ['style' => 'font-size:14px;']);
+            
+            // Format current total duration.
+            if (isset($timetracks[$student->id]->total_duration) && $timetracks[$student->id]->total_duration > 0) {
+                $duration_seconds = $timetracks[$student->id]->total_duration;
+                $mins = floor($duration_seconds / 60);
+                $secs = $duration_seconds % 60;
+                if ($mins > 0) {
+                    $duration = $mins . ' mins ' . $secs . ' secs';
+                } else {
+                    $duration = $secs . ' secs';
+                }
+            }
         } else {
-            $statustext = get_string('notcompleted', 'mod_codeframe');
+            $statustext = get_string('notstarted', 'mod_codeframe');
             $icon = '&#10006; ' . $statustext;
-            $class = 'badge badge-secondary bg-secondary text-white px-2 py-1';
+            $class = 'badge badge-danger bg-danger text-white px-2 py-1';
             $statushtml = html_writer::span($icon, $class, ['style' => 'font-size:14px;']);
-            $timecompleted = '-';
         }
 
-        $table->data[] = [
+        $row = new stdClass();
+        $row->fullname_sort = $fullname;
+        $row->email_sort = $student->email;
+        $row->status_sort = $hascompleted ? 3 : ($hasstarted ? 2 : 1);
+        $row->started_sort = $hasstarted ? $timetracks[$student->id]->time_started : 0;
+        $row->completed_sort = $timecompleted_timestamp;
+        $row->duration_sort = $duration_seconds;
+
+        $row->display = [
             $studentcell,
             $student->email,
             $statushtml,
+            $timestarted,
             $timecompleted,
+            $duration,
         ];
+        
+        $rows[] = $row;
     }
 
-    echo html_writer::table($table);
+    // Sort the rows based on the columns clicked by the user.
+    $sortcolumns = $table->get_sort_columns();
+    if (empty($sortcolumns)) {
+        $sortcolumns = ['fullname' => SORT_ASC];
+    }
+    
+    usort($rows, function($a, $b) use ($sortcolumns) {
+        foreach ($sortcolumns as $column => $direction) {
+            $sortkey = $column . '_sort';
+            if (!isset($a->$sortkey) || !isset($b->$sortkey) || $a->$sortkey == $b->$sortkey) {
+                continue;
+            }
+            $cmp = ($a->$sortkey < $b->$sortkey) ? -1 : 1;
+            return ($direction == SORT_DESC) ? -$cmp : $cmp;
+        }
+        return 0;
+    });
+
+    foreach ($rows as $row) {
+        $table->add_data($row->display);
+    }
+
+    $table->finish_output();
 }
 
 echo $OUTPUT->footer();

@@ -90,3 +90,49 @@ body#page-mod-codeframe-view .codeframe_wrapper iframe {
         box-shadow: none; /* Shadow is not needed when it fills the full width */
     }
 }
+
+/* ── Fullscreen button styles ────────────────────────────────────────────── */
+.codeframe-fullscreen-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+    opacity: 0.5;
+}
+
+.codeframe-fullscreen-btn:hover,
+.codeframe-fullscreen-btn:focus {
+    background-color: rgba(0, 0, 0, 0.8);
+    opacity: 1;
+    outline: none;
+}
+
+/* Hide the button if iframe content is raw html without the iframe tag */
+.codeframe_wrapper:not(:has(iframe)) .codeframe-fullscreen-btn {
+    display: none;
+}
+
+/* Hide the button for providers that already have their own fullscreen buttons (e.g., Canva, Genially) */
+.codeframe_wrapper:has(iframe[src*="canva.com"]) .codeframe-fullscreen-btn,
+.codeframe_wrapper:has(iframe[src*="genial.ly"]) .codeframe-fullscreen-btn,
+.codeframe_wrapper:has(iframe[src*="genially.com"]) .codeframe-fullscreen-btn {
+    display: none !important;
+}
+
+/* ── Fullscreen state ────────────────────────────────────────────────────── */
+.codeframe_wrapper.is-fullscreen {
+    padding-bottom: 0 !important;
+    height: 100vh !important;
+    width: 100vw !important;
+    border-radius: 0 !important;
+}

@@ -53,36 +53,36 @@ export const init = (cmid, courseid) => {
                         if (result && result.status) {
                             var completionRegion = document.querySelector('[data-region="completion-info"]');
                             if (completionRegion) {
-                                var elements = completionRegion.querySelectorAll('*');
-                                elements.forEach(function(el) {
-                                    var cls = el.className || '';
-                                    if (typeof cls === 'string' && (cls.indexOf('badge') > -1 ||
-                                            cls.indexOf('btn') > -1 || cls.indexOf('alert') > -1 ||
-                                            cls.indexOf('bg-') > -1)) {
-                                        el.style.setProperty('background-color', '#198754', 'important');
-                                        el.style.setProperty('color', '#ffffff', 'important');
-                                        el.style.setProperty('border-color', '#198754', 'important');
-                                    }
-                                });
-                                Str.get_strings([
-                                    {key: 'todo', component: 'mod_codeframe'},
-                                    {key: 'done', component: 'mod_codeframe'}
-                                ]).done(function(strings) {
-                                    var todoStr = strings[0];
-                                    var doneStr = strings[1];
-                                    var walker = document.createTreeWalker(completionRegion, NodeFilter.SHOW_TEXT, null, false);
-                                    var node = walker.nextNode();
-                                    while (node) {
-                                        node.nodeValue = node.nodeValue.replace(todoStr, doneStr);
-                                        node = walker.nextNode();
-                                    }
-                                });
+                                    var elements = completionRegion.querySelectorAll('*');
+                                    elements.forEach(function(el) {
+                                        var cls = el.className || '';
+                                        if (typeof cls === 'string' && (cls.indexOf('badge') > -1 ||
+                                                cls.indexOf('btn') > -1 || cls.indexOf('alert') > -1 ||
+                                                cls.indexOf('bg-') > -1)) {
+                                            el.style.setProperty('background-color', '#198754', 'important');
+                                            el.style.setProperty('color', '#ffffff', 'important');
+                                            el.style.setProperty('border-color', '#198754', 'important');
+                                        }
+                                    });
+                                    Str.get_strings([
+                                        {key: 'todo', component: 'mod_codeframe'},
+                                        {key: 'done', component: 'mod_codeframe'}
+                                    ]).done(function(strings) {
+                                        var todoStr = strings[0];
+                                        var doneStr = strings[1];
+                                        var walker = document.createTreeWalker(completionRegion, NodeFilter.SHOW_TEXT, null, false);
+                                        var node = walker.nextNode();
+                                        while (node) {
+                                            node.nodeValue = node.nodeValue.replace(todoStr, doneStr);
+                                            node = walker.nextNode();
+                                        }
+                                    });
+                                }
                             }
-                        }
-                        return result;
-                    }).catch(function(error) {
-                        Log.error('AJAX completion response failure:', error);
-                    });
+                            return result;
+                        }).catch(function(error) {
+                            Log.error('AJAX completion response failure:', error);
+                        });
                 }
             });
 };

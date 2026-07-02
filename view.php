@@ -61,6 +61,9 @@ if (empty($codeframe->completioncomplete)) {
     $completion->set_module_viewed($cm);
 }
 
+// Load the time tracker script to keep track of the duration of the visit.
+$PAGE->requires->js_call_amd('mod_codeframe/time_tracker', 'init', [$cm->id]);
+
 // Output page header.
 echo $OUTPUT->header();
 
