@@ -86,7 +86,12 @@ require(['mod_codeframe/tracker'], function(tracker) {
     var iconMinimize = btn.querySelector('.icon-minimize');
 
     btn.addEventListener('click', function() {
-        if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+        var isFull = document.fullscreenElement || 
+            document.mozFullScreenElement || 
+            document.webkitFullscreenElement || 
+            document.msFullscreenElement;
+        
+        if (!isFull) {
             // Enter fullscreen
             if (wrapper.requestFullscreen) {
                 wrapper.requestFullscreen();
@@ -112,7 +117,10 @@ require(['mod_codeframe/tracker'], function(tracker) {
     });
 
     var handleFullscreenChange = function() {
-        var isFullscreen = document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+        var isFullscreen = document.fullscreenElement || 
+            document.mozFullScreenElement || 
+            document.webkitFullscreenElement || 
+            document.msFullscreenElement;
 
         // We must check if THIS specific wrapper is the one currently in fullscreen,
         // because multiple codeframes might exist on the page.

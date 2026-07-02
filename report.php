@@ -81,9 +81,9 @@ if (empty($students)) {
     codeframe_ensure_time_table_exists();
     if ($DB->get_manager()->table_exists('codeframe_time')) {
         $timetracks = $DB->get_records(
-            'codeframe_time', 
-            ['cmid' => $cm->id], 
-            '', 
+            'codeframe_time',
+            ['cmid' => $cm->id],
+            '',
             'userid, time_started, total_duration, last_session_duration'
         );
     }
@@ -123,7 +123,7 @@ if (empty($students)) {
         $cdata = $completion->get_data($cm, false, $student->id);
         $corecompleted = false;
         if (isset($cdata->completionstate)) {
-            $corecompleted = ($cdata->completionstate == COMPLETION_COMPLETE 
+            $corecompleted = ($cdata->completionstate == COMPLETION_COMPLETE
                 || $cdata->completionstate == COMPLETION_COMPLETE_PASS);
         }
         $customcompleted = isset($completions[$student->id]);
