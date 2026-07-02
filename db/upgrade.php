@@ -77,8 +77,7 @@ function xmldb_codeframe_upgrade($oldversion) {
 
     // Upgrade step: Add the codeframe_time table.
     if ($oldversion < 2026070101) {
-        $table = new xmldb_table('codeframe_time');
-        
+        $table = new xmldb_table('codeframe_time');        
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('cmid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
