@@ -63,4 +63,3 @@ $string['timecompleted']           = 'Fecha de finalización';
 $string['timetocomplete']          = 'Tiempo total de completitud';
 $string['uploadfiles']             = 'O subir paquete HTML5';
 $string['uploadfiles_help']        = 'Sube una carpeta o un archivo zip que contenga tu contenido HTML5 (imágenes, JS, CSS, audio, etc.). El archivo principal debe llamarse "index.html" en el nivel raíz.';
-

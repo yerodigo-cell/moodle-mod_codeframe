@@ -68,4 +68,3 @@ $string['timetocomplete']                  = 'Time to complete';
 $string['todo']                            = 'To do:';
 $string['uploadfiles']                     = 'Or upload HTML5 presentation files';
 $string['uploadfiles_help']                = 'Upload a folder or a zip containing your HTML5 content (images, JS, CSS, audio, etc.). The main file must be named "index.html" (or another .html file) at the root level.';
-

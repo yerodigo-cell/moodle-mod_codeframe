@@ -42,52 +42,57 @@ if ($cmid > 0) {
         $success = true;
     } catch (\Exception $e) {
         // Log or ignore errors if the module doesn't exist or permissions fail.
+        error_log('Codeframe universal finish error: ' . $e->getMessage());
     }
 }
-?>
-<!DOCTYPE html>
+
+$title = get_string('finish_' . ($success ? 'success' : 'error') . '_title', 'mod_codeframe');
+$desc = get_string('finish_' . ($success ? 'success' : 'error') . '_desc', 'mod_codeframe');
+$color = $success ? '#198754' : '#dc3545';
+$auto = get_string('finish_close_auto', 'mod_codeframe');
+$btn = get_string('finish_btn_close', 'mod_codeframe');
+
+echo '<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Actividad Completada</title>
+    <title>' . htmlspecialchars($title) . '</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f8f9fa; color: #212529; text-align: center; }
-        .container { padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .btn { padding: 10px 20px; font-size: 16px; background: #198754; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 15px; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; 
+            display: flex; justify-content: center; align-items: center; 
+            height: 100vh; margin: 0; background-color: #f8f9fa; color: #212529; text-align: center; 
+        }
+        .container { 
+            padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        }
+        .btn { 
+            padding: 10px 20px; font-size: 16px; background: #198754; color: white; border: none; 
+            border-radius: 4px; cursor: pointer; margin-top: 15px; 
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <?php if ($success): ?>
-            <h2 style="color: #198754;"><?php echo get_string('finish_success_title', 'mod_codeframe'); ?></h2>
-            <p><?php echo get_string('finish_success_desc', 'mod_codeframe'); ?></p>
-        <?php else: ?>
-            <h2 style="color: #dc3545;"><?php echo get_string('finish_error_title', 'mod_codeframe'); ?></h2>
-            <p><?php echo get_string('finish_error_desc', 'mod_codeframe'); ?></p>
-        <?php endif; ?>
-        <p><small><?php echo get_string('finish_close_auto', 'mod_codeframe'); ?></small></p>
-        <button class="btn" onclick="window.close()"><?php echo get_string('finish_btn_close', 'mod_codeframe'); ?></button>
+        <h2 style="color: ' . htmlspecialchars($color) . ';">' . htmlspecialchars($title) . '</h2>
+        <p>' . htmlspecialchars($desc) . '</p>
+        <p><small>' . htmlspecialchars($auto) . '</small></p>
+        <button class="btn" onclick="window.close()">' . htmlspecialchars($btn) . '</button>
     </div>
-
     <script>
-        // Send a universal completion signal to all open Moodle tabs to update their UI dynamically
         try {
-            var timestamp = Date.now().toString();
-            localStorage.setItem('codeframe_canva_finished_universal', timestamp);
-            
-            // Clean it up immediately so it can be triggered again later
+            var ts = Date.now().toString();
+            localStorage.setItem("codeframe_canva_finished_universal", ts);
             setTimeout(function() {
-                localStorage.removeItem('codeframe_canva_finished_universal');
+                localStorage.removeItem("codeframe_canva_finished_universal");
             }, 500);
         } catch (e) {
-            console.error('No se pudo escribir en localStorage', e);
+            console.error("No se pudo escribir en localStorage", e);
         }
-
-        // Close the window automatically
         setTimeout(function() {
             window.close();
         }, 1500);
     </script>
 </body>
-</html>
+</html>';
