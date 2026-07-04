@@ -90,7 +90,7 @@ class mod_codeframe_mod_form extends moodleform_mod {
             'completioninfo',
             '',
             html_writer::div(
-                get_string('completioninfo', 'mod_codeframe'),
+                get_string('completioninfo', 'mod_codeframe', $CFG->wwwroot),
                 '',
                 ['class' => 'alert alert-info mt-2 p-3']
             )

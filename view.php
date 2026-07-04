@@ -61,6 +61,10 @@ if (empty($codeframe->completioncomplete)) {
     $completion->set_module_viewed($cm);
 }
 
+// Store the active CMID in the user's session for universal completion tracking.
+global $SESSION;
+$SESSION->codeframe_active_cmid = $cm->id;
+
 // Load the time tracker script to keep track of the duration of the visit.
 $PAGE->requires->js_call_amd('mod_codeframe/time_tracker', 'init', [$cm->id]);
 

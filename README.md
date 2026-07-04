@@ -4,9 +4,9 @@
 
 ## Key Features
 
-*   **Smart URL Conversion:** Paste a direct share link from Kahoot, Wayground, Google Docs, Google Slides, Google Forms, Google Sheets, Genially or YouTube, and Codeframe will automatically convert it into a secure embeddable iframe. No need to hunt for the HTML embed code!
+*   **Smart URL Conversion:** Paste a direct share link from Genially, Google Docs, Google Slides, Google Forms, Google Sheets, Wayground, Padlet or YouTube, and Codeframe will automatically convert it into a secure embeddable iframe. No need to hunt for the HTML embed code!
 *   **True Completion Tracking:** For interactive content (like Genially or custom HTML5), Codeframe can track exactly when a student *finishes* the activity. The embedded content simply sends a JavaScript `postMessage`, and Moodle instantly records the activity as completed in the Gradebook.
-*   **HTML Package Support:** Allows teachers to upload a `.zip` file containing an `index.html` (e.g., exported from Articulate Storyline, Twine, or custom web projects). Codeframe extracts and serves the package securely within the wrapper.
+*   **HTML Package Support:** Allows teachers to upload a `.zip` file or several files containing an `index.html` (e.g., exported from Articulate Storyline, Twine, or custom web projects). Codeframe extracts and serves the package securely within the wrapper.
 *   **Progress Report Dashboard:** Displays a clean table of exactly which students have completed the activity and at what time.
 *   **Enterprise Ready:** Fully supports Moodle course backups, duplication, the Moodle 5.x Activities overview tab, and strictly complies with Moodle's GDPR Privacy API.
 
@@ -15,7 +15,7 @@
 1. Turn on editing in your Moodle course.
 2. Click **Add an activity or resource** and select **Codeframe**.
 3. In the settings form, you have two options:
-    *   **Embed Code / URL:** Paste a smart URL (Google Drive, YouTube) or a raw `<iframe ...>` code (Canva, Microsoft OneDrive, Genially).
+    *   **Embed Code / URL:** Paste a smart URL (Google Drive, Genially) or a raw `<iframe ...>` code (Canva, Microsoft OneDrive, Kahoot).
     *   **Upload HTML Package:** Upload a ZIP file containing an `index.html` at its root.
 4. (Optional) Under **Activity completion**, select *Show activity as complete when conditions are met* and check the **Require iframe completion** box.
 
@@ -34,6 +34,13 @@ If you are pasting this code inside a Genially presentation (using the *Insert >
 
 ```html
 <script>window.top.postMessage('codeframe_completed', '*');</script>
+```
+
+**For Canva, Google Slides or similar (No-code):**
+If your tool doesn't allow custom code, simply add a hyperlink on your final slide or button pointing to this universal completion URL. When the student clicks this link, the activity will be automatically marked as finished:
+
+```
+https://[your-moodle-site]/mod/codeframe/finish.php
 ```
 
 

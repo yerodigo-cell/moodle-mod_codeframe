@@ -23,6 +23,7 @@
 import * as Ajax from 'core/ajax';
 import * as Log from 'core/log';
 import * as Str from 'core/str';
+import * as Notification from 'core/notification';
 
 export const init = (cmid, courseid) => {
             Log.debug('Codeframe tracker AMD module initialized for CMID: ' + cmid);
@@ -31,14 +32,47 @@ export const init = (cmid, courseid) => {
                  // Determine if the message data is equal to 'codeframe_completed'
                  // or if it's an object containing this message.
                  var isCompleted = false;
+                 var showAlert = false;
 
-                 if (typeof event.data === 'string' && event.data === 'codeframe_completed') {
+                 var msgString = '';
+                 if (typeof event.data === 'string') {
+                     msgString = event.data;
+                 } else if (event.data && typeof event.data === 'object' && event.data.message) {
+                     msgString = event.data.message;
+                 }
+
+                 if (msgString === 'codeframe_completed') {
                      isCompleted = true;
-                 } else if (event.data && typeof event.data === 'object' && event.data.message === 'codeframe_completed') {
+                 } else if (msgString === 'codeframe_completed_alert') {
                      isCompleted = true;
+                     showAlert = true;
                  }
 
                 if (isCompleted) {
+                     triggerCompletion(showAlert);
+                 }
+            });
+
+            // Listen to localStorage for cross-tab communication (from finish.php)
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'codeframe_canva_finished_universal' && e.newValue) {
+                    Log.debug('Codeframe universal cross-tab completion signal received.');
+                    triggerCompletion(true); // Always show alert for cross-tab
+                } else if (e.key === 'codeframe_completed_cmid' && e.newValue) {
+                    // Fallback for the old specific ID method just in case
+                    if (String(e.newValue) === String(cmid)) {
+                        Log.debug('Codeframe cross-tab completion signal received.');
+                        triggerCompletion(true);
+                    }
+                }
+            });
+
+            /**
+             * Triggers the completion state for this Codeframe instance.
+             *
+             * @param {Boolean} showAlert Whether to show a success notification after completion.
+             */
+            function triggerCompletion(showAlert) {
                     Log.debug('Codeframe completed signal received. Sending AJAX request...');
 
                     // Perform the native Moodle AJAX call to report completion.
@@ -51,6 +85,19 @@ export const init = (cmid, courseid) => {
                     }])[0].then(function(result) {
                         Log.debug('AJAX completion response success:', result);
                         if (result && result.status) {
+                            if (showAlert) {
+                                Str.get_string('success_completed', 'mod_codeframe').done(function(msg) {
+                                    Notification.addNotification({
+                                        message: msg,
+                                        type: 'success'
+                                    });
+                                }).fail(function() {
+                                    Notification.addNotification({
+                                        message: 'Activity successfully marked as complete.',
+                                        type: 'success'
+                                    });
+                                });
+                            }
                             var completionRegion = document.querySelector('[data-region="completion-info"]');
                             if (completionRegion) {
                                     var elements = completionRegion.querySelectorAll('*');
@@ -100,6 +147,5 @@ export const init = (cmid, courseid) => {
                         }).catch(function(error) {
                             Log.error('AJAX completion response failure:', error);
                         });
-                }
-            });
+            }
 };
