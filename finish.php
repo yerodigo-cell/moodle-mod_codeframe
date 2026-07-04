@@ -42,7 +42,7 @@ if ($cmid > 0) {
         $success = true;
     } catch (\Exception $e) {
         // Log or ignore errors if the module doesn't exist or permissions fail.
-        error_log('Codeframe universal finish error: ' . $e->getMessage());
+        debugging('Codeframe universal finish error: ' . $e->getMessage(), DEBUG_DEVELOPER);
     }
 }
 
@@ -59,17 +59,17 @@ echo '<!DOCTYPE html>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>' . htmlspecialchars($title) . '</title>
     <style>
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; 
-            display: flex; justify-content: center; align-items: center; 
-            height: 100vh; margin: 0; background-color: #f8f9fa; color: #212529; text-align: center; 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; margin: 0; background-color: #f8f9fa; color: #212529; text-align: center;
         }
-        .container { 
-            padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+        .container {
+            padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
-        .btn { 
-            padding: 10px 20px; font-size: 16px; background: #198754; color: white; border: none; 
-            border-radius: 4px; cursor: pointer; margin-top: 15px; 
+        .btn {
+            padding: 10px 20px; font-size: 16px; background: #198754; color: white; border: none;
+            border-radius: 4px; cursor: pointer; margin-top: 15px;
         }
     </style>
 </head>
