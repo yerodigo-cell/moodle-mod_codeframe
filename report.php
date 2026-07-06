@@ -65,15 +65,6 @@ if (empty($students)) {
     // Fetch all completions for this activity to avoid querying inside the loop.
     $completions = $DB->get_records('codeframe_completion', ['cmid' => $cm->id], '', 'userid, timecompleted, time_spent');
 
-    // Fetch last accesses from standard logstore if it exists.
-    $lastaccesses = [];
-    if ($DB->get_manager()->table_exists('logstore_standard_log')) {
-        $sql = "SELECT userid, MAX(timecreated) AS lastaccess
-                  FROM {logstore_standard_log}
-                 WHERE contextid = :contextid
-              GROUP BY userid";
-        $lastaccesses = $DB->get_records_sql($sql, ['contextid' => $context->id]);
-    }
 
     // Fetch time tracking data.
     $timetracks = [];

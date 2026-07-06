@@ -33,4 +33,12 @@ $functions = [
         'ajax'          => true,
         'loginrequired' => true,
     ],
+    'mod_codeframe_track_time' => [
+        'classname'     => 'mod_codeframe\external\track_time',
+        'methodname'    => 'execute',
+        'description'   => 'Tracks the time spent viewing a codeframe activity.',
+        'type'          => 'write',
+        'ajax'          => true,
+        'loginrequired' => true,
+    ],
 ];

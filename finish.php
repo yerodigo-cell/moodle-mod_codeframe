@@ -52,47 +52,25 @@ $color = $success ? '#198754' : '#dc3545';
 $auto = get_string('finish_close_auto', 'mod_codeframe');
 $btn = get_string('finish_btn_close', 'mod_codeframe');
 
-echo '<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>' . htmlspecialchars($title) . '</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-            display: flex; justify-content: center; align-items: center;
-            height: 100vh; margin: 0; background-color: #f8f9fa; color: #212529; text-align: center;
-        }
-        .container {
-            padding: 2rem; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .btn {
-            padding: 10px 20px; font-size: 16px; background: #198754; color: white; border: none;
-            border-radius: 4px; cursor: pointer; margin-top: 15px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h2 style="color: ' . htmlspecialchars($color) . ';">' . htmlspecialchars($title) . '</h2>
-        <p>' . htmlspecialchars($desc) . '</p>
-        <p><small>' . htmlspecialchars($auto) . '</small></p>
-        <button class="btn" onclick="window.close()">' . htmlspecialchars($btn) . '</button>
-    </div>
-    <script>
-        try {
-            var ts = Date.now().toString();
-            localStorage.setItem("codeframe_canva_finished_universal", ts);
-            setTimeout(function() {
-                localStorage.removeItem("codeframe_canva_finished_universal");
-            }, 500);
-        } catch (e) {
-            console.error("No se pudo escribir en localStorage", e);
-        }
-        setTimeout(function() {
-            window.close();
-        }, 1500);
-    </script>
-</body>
-</html>';
+// Set up the page using Moodle's Page API.
+$PAGE->set_url('/mod/codeframe/finish.php');
+$PAGE->set_context(context_system::instance());
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
+$PAGE->set_pagelayout('popup');
+
+echo $OUTPUT->header();
+
+$templatedata = [
+    'color' => $color,
+    'title' => $title,
+    'desc'  => $desc,
+    'auto'  => $auto,
+    'btn'   => $btn
+];
+
+$PAGE->requires->js_call_amd('mod_codeframe/finish_page', 'init');
+
+echo $OUTPUT->render_from_template('mod_codeframe/finish_page', $templatedata);
+
+echo $OUTPUT->footer();

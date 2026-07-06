@@ -54,6 +54,14 @@ class provider implements
             'timecompleted' => 'privacy:metadata:codeframe_completion:timecompleted',
         ], 'privacy:metadata:codeframe_completion');
 
+        $collection->add_database_table('codeframe_time', [
+            'userid' => 'privacy:metadata:codeframe_time:userid',
+            'time_started' => 'privacy:metadata:codeframe_time:time_started',
+            'last_ping' => 'privacy:metadata:codeframe_time:last_ping',
+            'total_duration' => 'privacy:metadata:codeframe_time:total_duration',
+            'last_session_duration' => 'privacy:metadata:codeframe_time:last_session_duration',
+        ], 'privacy:metadata:codeframe_time');
+
         return $collection;
     }
 
@@ -65,18 +73,31 @@ class provider implements
      */
     public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new contextlist();
+        
+        $params = [
+            'modname' => 'codeframe',
+            'contextlevel' => CONTEXT_MODULE,
+            'userid' => $userid,
+        ];
+
+        // Contexts from completion.
         $sql = "SELECT c.id
                   FROM {context} c
                   JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
                   JOIN {modules} m ON m.id = cm.module AND m.name = :modname
                   JOIN {codeframe_completion} cc ON cc.cmid = cm.id
                  WHERE cc.userid = :userid";
-        $params = [
-            'modname' => 'codeframe',
-            'contextlevel' => CONTEXT_MODULE,
-            'userid' => $userid,
-        ];
         $contextlist->add_from_sql($sql, $params);
+
+        // Contexts from time tracking.
+        $sql = "SELECT c.id
+                  FROM {context} c
+                  JOIN {course_modules} cm ON cm.id = c.instanceid AND c.contextlevel = :contextlevel
+                  JOIN {modules} m ON m.id = cm.module AND m.name = :modname
+                  JOIN {codeframe_time} ct ON ct.cmid = cm.id
+                 WHERE ct.userid = :userid";
+        $contextlist->add_from_sql($sql, $params);
+
         return $contextlist;
     }
 
@@ -101,13 +122,26 @@ class provider implements
             }
 
             $cmid = $context->instanceid;
-            $record = $DB->get_record('codeframe_completion', ['cmid' => $cmid, 'userid' => $userid]);
-
-            if ($record) {
+            
+            // Export completion data.
+            $completion = $DB->get_record('codeframe_completion', ['cmid' => $cmid, 'userid' => $userid]);
+            if ($completion) {
                 $exportdata = (object)[
-                    'timecompleted' => transform::datetime($record->timecompleted),
+                    'timecompleted' => transform::datetime($completion->timecompleted),
                 ];
-                writer::with_context($context)->export_data([], $exportdata);
+                writer::with_context($context)->export_related_data([], 'codeframe_completion', $exportdata);
+            }
+
+            // Export time tracking data.
+            $timetrack = $DB->get_record('codeframe_time', ['cmid' => $cmid, 'userid' => $userid]);
+            if ($timetrack) {
+                $exportdata = (object)[
+                    'time_started' => transform::datetime($timetrack->time_started),
+                    'last_ping' => transform::datetime($timetrack->last_ping),
+                    'total_duration' => $timetrack->total_duration,
+                    'last_session_duration' => $timetrack->last_session_duration,
+                ];
+                writer::with_context($context)->export_related_data([], 'codeframe_time', $exportdata);
             }
         }
     }
@@ -124,6 +158,7 @@ class provider implements
 
         global $DB;
         $DB->delete_records('codeframe_completion', ['cmid' => $context->instanceid]);
+        $DB->delete_records('codeframe_time', ['cmid' => $context->instanceid]);
     }
 
     /**
@@ -154,6 +189,7 @@ class provider implements
         $params = array_merge(['userid' => $userid], $inparams);
 
         $DB->delete_records_select('codeframe_completion', "userid = :userid AND cmid $insql", $params);
+        $DB->delete_records_select('codeframe_time', "userid = :userid AND cmid $insql", $params);
     }
 
     /**
@@ -167,11 +203,18 @@ class provider implements
             return;
         }
 
+        $params = ['cmid' => $context->instanceid];
+
+        // Users from completion.
         $sql = "SELECT userid
                   FROM {codeframe_completion}
                  WHERE cmid = :cmid";
-        $params = ['cmid' => $context->instanceid];
+        $userlist->add_from_sql('userid', $sql, $params);
 
+        // Users from time tracking.
+        $sql = "SELECT userid
+                  FROM {codeframe_time}
+                 WHERE cmid = :cmid";
         $userlist->add_from_sql('userid', $sql, $params);
     }
 
@@ -196,5 +239,6 @@ class provider implements
         $params = array_merge(['cmid' => $context->instanceid], $inparams);
 
         $DB->delete_records_select('codeframe_completion', "cmid = :cmid AND userid $insql", $params);
+        $DB->delete_records_select('codeframe_time', "cmid = :cmid AND userid $insql", $params);
     }
 }

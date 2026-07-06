@@ -136,3 +136,36 @@ body#page-mod-codeframe-view .codeframe_wrapper.is-fullscreen {
     width: 100vw;
     border-radius: 0;
 }
+
+/* ── Finish page styles ──────────────────────────────────────────────────── */
+body#page-mod-codeframe-finish {
+    background-color: #f8f9fa;
+}
+
+.codeframe-finish-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: #212529;
+    text-align: center;
+}
+
+.codeframe-finish-card {
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.codeframe-finish-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #198754;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 15px;
+}
