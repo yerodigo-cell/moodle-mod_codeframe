@@ -66,7 +66,7 @@ $templatedata = [
     'title' => $title,
     'desc'  => $desc,
     'auto'  => $auto,
-    'btn'   => $btn
+    'btn'   => $btn,
 ];
 
 $PAGE->requires->js_call_amd('mod_codeframe/finish_page', 'init');

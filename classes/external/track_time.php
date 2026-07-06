@@ -34,7 +34,6 @@ use external_value;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class track_time extends external_api {
-
     /**
      * Parameters for track_time.
      *
