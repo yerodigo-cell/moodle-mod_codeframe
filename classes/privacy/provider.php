@@ -73,7 +73,7 @@ class provider implements
      */
     public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new contextlist();
-        
+
         $params = [
             'modname' => 'codeframe',
             'contextlevel' => CONTEXT_MODULE,
@@ -122,7 +122,7 @@ class provider implements
             }
 
             $cmid = $context->instanceid;
-            
+
             // Export completion data.
             $completion = $DB->get_record('codeframe_completion', ['cmid' => $cmid, 'userid' => $userid]);
             if ($completion) {
