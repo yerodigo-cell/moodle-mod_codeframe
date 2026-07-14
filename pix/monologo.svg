@@ -1,31 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="100%" height="100%">
-  <!--
-    Monochrome thin-line-art icon for mod_codeframe.
-    Optimized for perfect weight balance with Moodle core resource icons.
-  -->
-
-  <!-- ── Browser window outline (thin stroke width 1.1) ────────────────── -->
-  <rect x="2" y="2.5" width="20" height="19" rx="2" 
-        fill="none" stroke="currentColor" stroke-width="1.1"/>
-
-  <!-- ── Top bar divider line (thin stroke width 1.1) ──────────────────── -->
-  <line x1="2" y1="7.5" x2="22" y2="7.5" 
-        stroke="currentColor" stroke-width="1.1"/>
-
-  <!-- ── Three traffic-light buttons (small dots) ──────────────────────── -->
-  <circle cx="5.5" cy="5" r="0.8" fill="currentColor"/>
-  <circle cx="9"   cy="5" r="0.8" fill="currentColor"/>
-  <circle cx="12.5" cy="5" r="0.8" fill="currentColor"/>
-
-  <!-- ── Mouse cursor arrow outline (thin stroke width 1.0) ────────────── -->
-  <path d="M8.5 10.5 L8.5 17.5 L10.5 15.5 L12.2 19 L13.3 18.3 L11.6 15 L14 15 Z"
-        fill="none" stroke="currentColor" stroke-width="1.0" stroke-linejoin="round"/>
-
-  <!-- ── Click ripple (fine stroke width 0.8) ──────────────────────────── -->
-  <circle cx="17.5" cy="12.5" r="2.5"
-          fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.6"/>
-  <circle cx="17.5" cy="12.5" r="1.2"
-          fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.8"/>
-  <circle cx="17.5" cy="12.5" r="0.4"
-          fill="currentColor"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;">
+    <g transform="matrix(0.85,0,0,0.9,1.358127,1.126892)">
+        <path d="M2,7.5L22,7.5" style="fill:none;fill-rule:nonzero;stroke:rgb(33,37,41);stroke-width:1.1px;"/>
+    </g>
+    <path d="M5.499,4C4.118,4 2.999,5.119 2.999,6.5L2.999,17.5C2.999,18.881 4.118,20 5.499,20L18.501,20C19.881,20 21.001,18.881 21.001,17.5L21.001,6.5C21.001,5.119 19.881,4 18.501,4L5.499,4ZM3.999,6.5C3.999,5.672 4.671,5 5.499,5L18.501,5C19.329,5 20.001,5.672 20.001,6.5L20.001,17.5C20.001,18.328 19.329,19 18.501,19L5.499,19C4.671,19 3.999,18.328 3.999,17.5L3.999,6.5Z" style="fill:rgb(33,37,41);"/>
+    <g transform="matrix(0.9,0,0,0.9,1.007105,1.721395)">
+        <circle cx="5.5" cy="5" r="0.8"/>
+    </g>
+    <g transform="matrix(0.9,0,0,0.9,3.467288,1.723182)">
+        <circle cx="5.5" cy="5" r="0.8"/>
+    </g>
+    <g transform="matrix(0.9,0,0,0.9,5.877893,1.757716)">
+        <circle cx="5.5" cy="5" r="0.8"/>
+    </g>
+    <g transform="matrix(0.743613,-0.162051,0.161824,0.742573,2.772453,5.795127)">
+        <path d="M8.5,10.5L8.5,17.5L10.5,15.5L12.2,19L13.3,18.3L11.6,15L14,15L8.5,10.5Z" style="fill:none;fill-rule:nonzero;stroke:black;stroke-width:1px;stroke-linejoin:round;"/>
+    </g>
+    <g transform="matrix(0.9,0,0,0.9,-6.297618,0.448849)">
+        <circle cx="17.5" cy="12.5" r="2.5" style="fill:none;stroke:black;stroke-opacity:0.6;stroke-width:0.8px;"/>
+    </g>
+    <g transform="matrix(0.9,0,0,0.9,-6.297618,0.448849)">
+        <circle cx="17.5" cy="12.5" r="1.2" style="fill:none;stroke:black;stroke-opacity:0.8;stroke-width:0.8px;"/>
+    </g>
+    <g transform="matrix(0.9,0,0,0.9,-6.297618,0.448849)">
+        <circle cx="17.5" cy="12.5" r="0.4"/>
+    </g>
 </svg>
