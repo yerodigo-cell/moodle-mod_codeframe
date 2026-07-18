@@ -99,6 +99,8 @@ if (empty($students)) {
 
     // Initialize core completion info.
     $completion = new \completion_info($course);
+    $modinfo = get_fast_modinfo($course);
+    $cminfo = $modinfo->get_cm($cm->id);
 
     $rows = [];
 
@@ -111,7 +113,7 @@ if (empty($students)) {
         $studentcell = html_writer::div($picturehtml . ' ' . $fullname, 'd-flex align-items-center gap-2');
 
         // Determine completion status using Moodle core and plugin custom table as fallback.
-        $cdata = $completion->get_data($cm, false, $student->id);
+        $cdata = $completion->get_data($cminfo, false, $student->id);
         $corecompleted = false;
         if (isset($cdata->completionstate)) {
             $corecompleted = ($cdata->completionstate == COMPLETION_COMPLETE

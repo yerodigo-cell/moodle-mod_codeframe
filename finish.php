@@ -23,6 +23,7 @@
  */
 
 require_once('../../config.php');
+require_once($CFG->libdir . '/externallib.php');
 require_once(__DIR__ . '/lib.php');
 
 // Authenticate user.
