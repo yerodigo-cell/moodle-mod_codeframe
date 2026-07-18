@@ -152,7 +152,7 @@ class mod_codeframe_mod_form extends moodleform_mod {
      */
     public function add_completion_rules() {
         $mform = $this->_form;
-        $suffix = $this->get_suffix();
+        $suffix = method_exists($this, 'get_suffix') ? $this->get_suffix() : '';
 
         $elementname = 'completioncomplete' . $suffix;
         $mform->addElement(
@@ -174,7 +174,7 @@ class mod_codeframe_mod_form extends moodleform_mod {
      * @return bool
      */
     public function completion_rule_enabled($data) {
-        $suffix = $this->get_suffix();
+        $suffix = method_exists($this, 'get_suffix') ? $this->get_suffix() : '';
         $dataarr = (array)$data;
         return !empty($dataarr['completioncomplete']) || !empty($dataarr['completioncomplete' . $suffix]);
     }
@@ -189,7 +189,7 @@ class mod_codeframe_mod_form extends moodleform_mod {
     public function data_preprocessing(&$defaultvalues) {
         parent::data_preprocessing($defaultvalues);
 
-        $suffix = $this->get_suffix();
+        $suffix = method_exists($this, 'get_suffix') ? $this->get_suffix() : '';
 
         // Load files when editing.
         if (!empty($defaultvalues['id'])) {
