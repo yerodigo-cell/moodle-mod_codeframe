@@ -24,10 +24,24 @@
 
 namespace mod_codeframe\external;
 
-use external_api;
-use external_function_parameters;
-use external_value;
-use external_single_structure;
+// Ensure legacy library is loaded for Moodle < 4.2.
+global $CFG;
+if (file_exists($CFG->libdir . '/externallib.php')) {
+    require_once($CFG->libdir . '/externallib.php');
+}
+
+// Create version-agnostic aliases in our namespace.
+if (class_exists('core_external\external_api')) {
+    class_alias('core_external\external_api', 'mod_codeframe\external\codeframe_external_api');
+    class_alias('core_external\external_function_parameters', 'mod_codeframe\external\codeframe_external_function_parameters');
+    class_alias('core_external\external_value', 'mod_codeframe\external\codeframe_external_value');
+    class_alias('core_external\external_single_structure', 'mod_codeframe\external\codeframe_external_single_structure');
+} else {
+    class_alias('external_api', 'mod_codeframe\external\codeframe_external_api');
+    class_alias('external_function_parameters', 'mod_codeframe\external\codeframe_external_function_parameters');
+    class_alias('external_value', 'mod_codeframe\external\codeframe_external_value');
+    class_alias('external_single_structure', 'mod_codeframe\external\codeframe_external_single_structure');
+}
 
 /**
  * External function mod_codeframe_mark_completed.
@@ -40,16 +54,16 @@ use external_single_structure;
  *     custom_completion::get_state(), find the row we just wrote, and
  *     persist COMPLETION_COMPLETE to mdl_course_modules_completion.
  */
-class mark_completed extends external_api {
+class mark_completed extends codeframe_external_api {
     /**
      * Describe accepted parameters.
      *
      * @return external_function_parameters
      */
     public static function execute_parameters() {
-        return new external_function_parameters([
-            'cmid'     => new external_value(PARAM_INT, 'Course module ID of the activity.', VALUE_REQUIRED),
-            'courseid' => new external_value(PARAM_INT, 'Course ID.', VALUE_REQUIRED),
+        return new codeframe_external_function_parameters([
+            'cmid'     => new codeframe_external_value(PARAM_INT, 'Course module ID of the activity.', VALUE_REQUIRED),
+            'courseid' => new codeframe_external_value(PARAM_INT, 'Course ID.', VALUE_REQUIRED),
         ]);
     }
 
@@ -142,9 +156,9 @@ class mark_completed extends external_api {
      * @return external_single_structure
      */
     public static function execute_returns() {
-        return new external_single_structure([
-            'status'  => new external_value(PARAM_BOOL, 'True if the activity was marked complete.'),
-            'message' => new external_value(PARAM_TEXT, 'Feedback message.'),
+        return new codeframe_external_single_structure([
+            'status'  => new codeframe_external_value(PARAM_BOOL, 'True if the activity was marked complete.'),
+            'message' => new codeframe_external_value(PARAM_TEXT, 'Feedback message.'),
         ]);
     }
 }
