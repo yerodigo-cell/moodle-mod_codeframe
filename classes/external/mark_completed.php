@@ -24,6 +24,8 @@
 
 namespace mod_codeframe\external;
 
+defined('MOODLE_INTERNAL') || die();
+
 // Ensure legacy library is loaded for Moodle < 4.2.
 global $CFG;
 if (file_exists($CFG->libdir . '/externallib.php')) {
