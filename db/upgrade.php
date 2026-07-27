@@ -94,5 +94,17 @@ function xmldb_codeframe_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2026070101, 'codeframe');
     }
 
+    // Upgrade step: Add aspectratio column to codeframe table.
+    if ($oldversion < 2026072700) {
+        $table = new xmldb_table('codeframe');
+        $field = new xmldb_field('aspectratio', XMLDB_TYPE_CHAR, '20', null, XMLDB_NOTNULL, null, '16:9', 'embedcode');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        upgrade_mod_savepoint(true, 2026072700, 'codeframe');
+    }
+
     return true;
 }

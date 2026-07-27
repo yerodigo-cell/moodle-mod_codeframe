@@ -29,6 +29,14 @@
     box-shadow: 0 2px 16px rgba(0, 0, 0, 0.12);
 }
 
+.codeframe_wrapper.ratio-1-1 {
+    padding-bottom: 100%;
+}
+
+.codeframe_wrapper.ratio-4-3 {
+    padding-bottom: 75%;
+}
+
 body#page-mod-codeframe-view .codeframe_wrapper iframe {
     position: absolute;
     top: 0;

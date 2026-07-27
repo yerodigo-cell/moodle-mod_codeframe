@@ -24,6 +24,11 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['aspectratio']             = 'Formato (Relación de aspecto)';
+$string['aspectratio_16_9']        = 'Panorámico (16:9)';
+$string['aspectratio_1_1']         = 'Cuadrado (1:1)';
+$string['aspectratio_4_3']         = 'Clásico (4:3)';
+$string['aspectratio_help']        = 'Selecciona el formato para el contenido incrustado. Esto controla la altura del contenedor. Panorámico es el valor por defecto y se ajusta a la mayoría de presentaciones. Cuadrado es útil para contenidos altos o diseños verticales.';
 $string['codeframe:addinstance']   = 'Añadir una nueva actividad Codeframe';
 $string['codeframe:view']          = 'Ver actividad Codeframe';
 $string['completed']               = 'Completado';

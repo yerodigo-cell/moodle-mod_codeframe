@@ -78,6 +78,7 @@ echo $OUTPUT->header();
 // and also supports legacy activities that already stored raw HTML.
 $templatedata = [
     'paddingbottom' => false,
+    'aspectclass' => '',
     'iframecontent' => false,
     'haserror' => false,
     'error' => '',
@@ -85,6 +86,14 @@ $templatedata = [
     'cmid' => $cm->id,
     'courseid' => $course->id,
 ];
+
+if (!empty($codeframe->aspectratio)) {
+    if ($codeframe->aspectratio === '1:1') {
+        $templatedata['aspectclass'] = ' ratio-1-1';
+    } else if ($codeframe->aspectratio === '4:3') {
+        $templatedata['aspectclass'] = ' ratio-4-3';
+    }
+}
 
 // Google Slides adds exactly a 29px control bar to the bottom of the iframe player.
 // To prevent 16:9 slides from being letterboxed (black bars on the sides) to fit this bar,

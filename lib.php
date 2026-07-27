@@ -39,6 +39,7 @@ function codeframe_add_instance(stdClass $codeframe, mod_codeframe_mod_form $mfo
     $data->intro              = $codeframe->intro;
     $data->introformat        = $codeframe->introformat;
     $data->embedcode          = $codeframe->embedcode;
+    $data->aspectratio        = !empty($codeframe->aspectratio) ? $codeframe->aspectratio : '16:9';
     $data->completioncomplete = !empty($codeframe->completioncomplete) ? 1 : 0;
     $data->timecreated        = time();
     $data->timemodified       = time();
@@ -79,6 +80,7 @@ function codeframe_update_instance(stdClass $codeframe, mod_codeframe_mod_form $
     $data->intro              = $codeframe->intro;
     $data->introformat        = $codeframe->introformat;
     $data->embedcode          = $codeframe->embedcode;
+    $data->aspectratio        = !empty($codeframe->aspectratio) ? $codeframe->aspectratio : '16:9';
     $data->completioncomplete = !empty($codeframe->completioncomplete) ? 1 : 0;
     $data->timemodified       = time();
 

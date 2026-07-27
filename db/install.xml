@@ -9,6 +9,7 @@
         <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Description of the activity"/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Format of the description field"/>
         <FIELD NAME="embedcode" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Iframe or HTML code embed snippet"/>
+        <FIELD NAME="aspectratio" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="16:9" SEQUENCE="false" COMMENT="Aspect ratio for the codeframe"/>
         <FIELD NAME="completioncomplete" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether iframe completion is required"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Creation timestamp"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Last modification timestamp"/>

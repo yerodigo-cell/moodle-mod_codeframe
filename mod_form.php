@@ -84,6 +84,16 @@ class mod_codeframe_mod_form extends moodleform_mod {
         );
         $mform->addHelpButton('files', 'uploadfiles', 'mod_codeframe');
 
+        // Aspect Ratio.
+        $aspectoptions = [
+            '16:9' => get_string('aspectratio_16_9', 'mod_codeframe'),
+            '1:1'  => get_string('aspectratio_1_1', 'mod_codeframe'),
+            '4:3'  => get_string('aspectratio_4_3', 'mod_codeframe'),
+        ];
+        $mform->addElement('select', 'aspectratio', get_string('aspectratio', 'mod_codeframe'), $aspectoptions);
+        $mform->setDefault('aspectratio', '16:9');
+        $mform->addHelpButton('aspectratio', 'aspectratio', 'mod_codeframe');
+
         // Completion info notice (right below the inputs).
         $mform->addElement(
             'static',
