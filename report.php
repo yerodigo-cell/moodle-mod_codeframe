@@ -48,13 +48,14 @@ echo $OUTPUT->heading(get_string('progressreport', 'mod_codeframe'));
 
 // Fetch users enrolled in the course who can view the activity.
 $coursecontext = context_course::instance($course->id);
-$userfields = 'u.id, u.firstname, u.lastname, u.email, u.picture, u.imagealt';
+// Fetch all user fields (u.*) to prevent issues with custom themes or missing fields for fullname/user_picture.
+$userfields = 'u.*';
 $enrolledusers = get_enrolled_users($coursecontext, 'mod/codeframe:view', 0, $userfields);
 
-// Filter out users who are teachers (i.e., those who can add instances).
+// Filter out users who have the capability to add instances (usually teachers/admins).
 $students = [];
 foreach ($enrolledusers as $user) {
-    if (!has_capability('mod/codeframe:addinstance', $context, $user->id)) {
+    if (!has_capability('mod/codeframe:addinstance', $context, $user)) {
         $students[] = $user;
     }
 }
@@ -82,7 +83,7 @@ if (empty($students)) {
     // Build the table using flexible_table for sorting capabilities.
     require_once($CFG->libdir . '/tablelib.php');
     $table = new flexible_table('mod-codeframe-report-' . $cm->id);
-    $table->define_baseurl($url);
+    $table->define_baseurl($url->out(false));
     $table->define_columns(['fullname', 'email', 'status', 'started', 'completed', 'duration']);
     $table->define_headers([
         get_string('fullname'),
@@ -106,10 +107,16 @@ if (empty($students)) {
 
     foreach ($students as $student) {
         // Render student picture and name.
+        if (isset($student->email) && !is_scalar($student->email)) {
+            $student->email = '';
+        }
+        if (isset($student->imagealt) && !is_scalar($student->imagealt)) {
+            $student->imagealt = '';
+        }
         $userpicture = new user_picture($student);
         $userpicture->size = 35;
-        $picturehtml = $OUTPUT->render($userpicture);
-        $fullname = fullname($student);
+        $picturehtml = (string)$OUTPUT->render($userpicture);
+        $fullname = (string)fullname($student);
         $studentcell = html_writer::div($picturehtml . ' ' . $fullname, 'd-flex align-items-center gap-2');
 
         // Determine completion status using Moodle core and plugin custom table as fallback.
@@ -189,7 +196,7 @@ if (empty($students)) {
 
         $row->display = [
             $studentcell,
-            $student->email,
+            is_scalar($student->email) ? (string)$student->email : '',
             $statushtml,
             $timestarted,
             $timecompleted,
@@ -206,7 +213,7 @@ if (empty($students)) {
     usort($rows, function ($a, $b) use ($sortcolumns) {
         foreach ($sortcolumns as $column => $direction) {
             $sortkey = $column . '_sort';
-            if (!isset($a->$sortkey) || !isset($b->$sortkey) || $a->$sortkey == $b->$sortkey) {
+            if (!isset($a->$sortkey) || !isset($b->$sortkey) || $a->$sortkey === $b->$sortkey) {
                 continue;
             }
             $cmp = ($a->$sortkey < $b->$sortkey) ? -1 : 1;
