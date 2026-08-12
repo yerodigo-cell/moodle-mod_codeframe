@@ -26,10 +26,10 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['already_completed']               = 'Activity was already marked as complete.';
 $string['aspectratio']                     = 'Aspect Ratio';
-$string['aspectratio_16_9']                = 'Widescreen (16:9)';
-$string['aspectratio_4_3']                 = 'Classic (4:3)';
 $string['aspectratio_1_1']                 = 'Square (1:1)';
+$string['aspectratio_16_9']                = 'Widescreen (16:9)';
 $string['aspectratio_3_4']                 = 'Portrait (3:4)';
+$string['aspectratio_4_3']                 = 'Classic (4:3)';
 $string['aspectratio_9_16']                = 'Vertical / Mobile (9:16)';
 $string['aspectratio_help']                = 'Select the aspect ratio for the embedded content. This controls the height of the iframe. Widescreen is the default and fits most presentations. Square is useful for tall or portrait content.';
 $string['codeframe:addinstance']           = 'Add a new Codeframe activity';

@@ -87,7 +87,7 @@ $templatedata = [
     'courseid' => $course->id,
 ];
 
-$basepadding = 56.25; // Default 16:9.
+$basepadding = 56.25; // Default widescreen padding.
 
 if (!empty($codeframe->aspectratio)) {
     if ($codeframe->aspectratio === '1:1') {
