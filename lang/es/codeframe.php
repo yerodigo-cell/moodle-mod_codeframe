@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['aspectratio']             = 'Formato (Relación de aspecto)';
-$string['aspectratio_1_1']         = 'Cuadrado (1:1)';
 $string['aspectratio_16_9']        = 'Panorámico (16:9)';
+$string['aspectratio_1_1']         = 'Cuadrado (1:1)';
 $string['aspectratio_3_4']         = 'Retrato (3:4)';
 $string['aspectratio_4_3']         = 'Clásico (4:3)';
 $string['aspectratio_9_16']        = 'Vertical / Móvil (9:16)';
