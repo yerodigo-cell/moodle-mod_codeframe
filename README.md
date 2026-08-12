@@ -7,6 +7,7 @@
 *   **Smart URL Conversion:** Paste a direct share link from Genially, Google Docs, Google Slides, Google Forms, Google Sheets, Wayground, Padlet or YouTube, and Codeframe will automatically convert it into a secure embeddable iframe. No need to hunt for the HTML embed code!
 *   **True Completion Tracking:** For interactive content (like Genially or custom HTML5), Codeframe can track exactly when a student *finishes* the activity. The embedded content simply sends a JavaScript `postMessage`, and Moodle instantly records the activity as completed in the Gradebook.
 *   **HTML Package Support:** Allows teachers to upload a `.zip` file or several files containing an `index.html` (e.g., exported from Articulate Storyline, Twine, or custom web projects). Codeframe extracts and serves the package securely within the wrapper.
+*   **Responsive Aspect Ratios:** Choose from Widescreen (16:9), Classic (4:3), Square (1:1), Portrait (3:4), or Vertical / Mobile (9:16) to ensure your content always looks perfect. Codeframe automatically handles the responsive CSS, whether you are embedding a wide presentation or a vertical mobile-first design.
 *   **Progress Report Dashboard:** Displays a clean table of exactly which students have completed the activity and at what time.
 *   **Enterprise Ready:** Fully supports Moodle course backups, duplication, the Moodle 5.x Activities overview tab, and strictly complies with Moodle's GDPR Privacy API.
 
