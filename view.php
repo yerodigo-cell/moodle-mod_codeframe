@@ -18,7 +18,7 @@
  * View page for the Codeframe activity module.
  *
  * @package    mod_codeframe
- * @copyright  2026 Yeison Diaz
+ * @copyright  2026 EduPlugins Studio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -87,19 +87,30 @@ $templatedata = [
     'courseid' => $course->id,
 ];
 
+$base_padding = 56.25; // Default 16:9
+
 if (!empty($codeframe->aspectratio)) {
     if ($codeframe->aspectratio === '1:1') {
         $templatedata['aspectclass'] = ' ratio-1-1';
+        $base_padding = 100;
     } else if ($codeframe->aspectratio === '4:3') {
         $templatedata['aspectclass'] = ' ratio-4-3';
+        $base_padding = 75;
+    } else if ($codeframe->aspectratio === '3:4') {
+        $templatedata['aspectclass'] = ' ratio-3-4';
+        $base_padding = 133.3333;
+    } else if ($codeframe->aspectratio === '9:16') {
+        $templatedata['aspectclass'] = ' ratio-9-16';
+        $base_padding = 177.7778;
     }
 }
 
 // Google Slides adds exactly a 29px control bar to the bottom of the iframe player.
-// To prevent 16:9 slides from being letterboxed (black bars on the sides) to fit this bar,
-// we dynamically add 29px of vertical space to the wrapper's 16:9 calculation.
+// To prevent slides from being letterboxed (black bars on the sides) to fit this bar,
+// we dynamically add 29px of vertical space to the wrapper's calculation.
 if (strpos($codeframe->embedcode, 'docs.google.com/presentation') !== false) {
-    $templatedata['paddingbottom'] = 'calc(56.25% + 29px)';
+    $templatedata['paddingbottom'] = 'calc(' . $base_padding . '% + 29px)';
+    $templatedata['aspectclass'] = ''; // Remove CSS class to enforce inline style
 }
 
 if (trim($codeframe->embedcode) !== '') {

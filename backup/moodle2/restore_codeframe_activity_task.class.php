@@ -18,7 +18,7 @@
  * Restore task for mod_codeframe.
  *
  * @package    mod_codeframe
- * @copyright  2026 Yeison Diaz
+ * @copyright  2026 EduPlugins Studio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/mod/codeframe/backup/moodle2/restore_codeframe_st
  * Restore task for the Codeframe activity class.
  *
  * @package    mod_codeframe
- * @copyright  2026 Yeison Diaz
+ * @copyright  2026 EduPlugins Studio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class restore_codeframe_activity_task extends restore_activity_task {

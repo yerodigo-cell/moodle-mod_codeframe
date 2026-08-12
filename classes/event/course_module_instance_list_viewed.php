@@ -18,7 +18,7 @@
  * Event for when the list of codeframe instances is viewed.
  *
  * @package    mod_codeframe
- * @copyright  2026 Yeison Diaz
+ * @copyright  2026 EduPlugins Studio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -28,7 +28,7 @@ namespace mod_codeframe\event;
  * The course_module_instance_list_viewed event class.
  *
  * @package    mod_codeframe
- * @copyright  2026 Yeison Diaz
+ * @copyright  2026 EduPlugins Studio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed {

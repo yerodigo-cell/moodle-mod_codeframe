@@ -17,7 +17,7 @@
  * Time tracking for codeframe.
  *
  * @module     mod_codeframe/time_tracker
- * @copyright  2026 Yeison Diaz
+ * @copyright  2026 EduPlugins Studio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

@@ -18,7 +18,7 @@
  * Spanish strings for mod_codeframe.
  *
  * @package    mod_codeframe
- * @copyright  2026 Yeison Diaz
+ * @copyright  2026 EduPlugins Studio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,8 +26,10 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['aspectratio']             = 'Formato (Relación de aspecto)';
 $string['aspectratio_16_9']        = 'Panorámico (16:9)';
-$string['aspectratio_1_1']         = 'Cuadrado (1:1)';
 $string['aspectratio_4_3']         = 'Clásico (4:3)';
+$string['aspectratio_1_1']         = 'Cuadrado (1:1)';
+$string['aspectratio_3_4']         = 'Retrato (3:4)';
+$string['aspectratio_9_16']        = 'Vertical / Móvil (9:16)';
 $string['aspectratio_help']        = 'Selecciona el formato para el contenido incrustado. Esto controla la altura del contenedor. Panorámico es el valor por defecto y se ajusta a la mayoría de presentaciones. Cuadrado es útil para contenidos altos o diseños verticales.';
 $string['codeframe:addinstance']   = 'Añadir una nueva actividad Codeframe';
 $string['codeframe:view']          = 'Ver actividad Codeframe';

@@ -2,7 +2,7 @@
  * Styles for mod_codeframe activity module.
  *
  * @package    mod_codeframe
- * @copyright  2026 Yeison Diaz
+ * @copyright  2026 EduPlugins Studio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -35,6 +35,14 @@
 
 .codeframe_wrapper.ratio-4-3 {
     padding-bottom: 75%;
+}
+
+.codeframe_wrapper.ratio-3-4 {
+    padding-bottom: 133.3333%;
+}
+
+.codeframe_wrapper.ratio-9-16 {
+    padding-bottom: 177.7778%;
 }
 
 body#page-mod-codeframe-view .codeframe_wrapper iframe {

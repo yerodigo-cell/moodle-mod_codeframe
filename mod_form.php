@@ -18,7 +18,7 @@
  * Settings form for the Codeframe activity module.
  *
  * @package    mod_codeframe
- * @copyright  2026 Yeison Diaz
+ * @copyright  2026 EduPlugins Studio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
  * Settings form class for Codeframe.
  *
  * @package    mod_codeframe
- * @copyright  2026 Yeison Diaz
+ * @copyright  2026 EduPlugins Studio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_codeframe_mod_form extends moodleform_mod {
@@ -87,8 +87,10 @@ class mod_codeframe_mod_form extends moodleform_mod {
         // Aspect Ratio.
         $aspectoptions = [
             '16:9' => get_string('aspectratio_16_9', 'mod_codeframe'),
-            '1:1'  => get_string('aspectratio_1_1', 'mod_codeframe'),
             '4:3'  => get_string('aspectratio_4_3', 'mod_codeframe'),
+            '1:1'  => get_string('aspectratio_1_1', 'mod_codeframe'),
+            '3:4'  => get_string('aspectratio_3_4', 'mod_codeframe'),
+            '9:16' => get_string('aspectratio_9_16', 'mod_codeframe'),
         ];
         $mform->addElement('select', 'aspectratio', get_string('aspectratio', 'mod_codeframe'), $aspectoptions);
         $mform->setDefault('aspectratio', '16:9');
