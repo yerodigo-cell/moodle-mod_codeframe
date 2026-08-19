@@ -106,8 +106,12 @@ require(['mod_codeframe/tracker'], function(tracker) {
                 // Fallback for iOS iPhone where Fullscreen API is not supported on arbitrary elements
                 wrapper.classList.add('is-fullscreen-fallback');
                 wrapper.classList.add('is-fullscreen');
-                if (iconMaximize) iconMaximize.style.display = 'none';
-                if (iconMinimize) iconMinimize.style.display = 'block';
+                if (iconMaximize) {
+                    iconMaximize.style.display = 'none';
+                }
+                if (iconMinimize) {
+                    iconMinimize.style.display = 'block';
+                }
                 document.body.style.overflow = 'hidden';
             }
         } else {
@@ -115,8 +119,12 @@ require(['mod_codeframe/tracker'], function(tracker) {
             if (wrapper.classList.contains('is-fullscreen-fallback')) {
                 wrapper.classList.remove('is-fullscreen-fallback');
                 wrapper.classList.remove('is-fullscreen');
-                if (iconMaximize) iconMaximize.style.display = 'block';
-                if (iconMinimize) iconMinimize.style.display = 'none';
+                if (iconMaximize) {
+                    iconMaximize.style.display = 'block';
+                }
+                if (iconMinimize) {
+                    iconMinimize.style.display = 'none';
+                }
                 document.body.style.overflow = '';
             } else if (document.exitFullscreen) {
                 document.exitFullscreen();
