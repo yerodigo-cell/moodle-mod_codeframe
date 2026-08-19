@@ -89,7 +89,8 @@ require(['mod_codeframe/tracker'], function(tracker) {
         var isFull = document.fullscreenElement ||
             document.mozFullScreenElement ||
             document.webkitFullscreenElement ||
-            document.msFullscreenElement;
+            document.msFullscreenElement ||
+            wrapper.classList.contains('is-fullscreen-fallback');
 
         if (!isFull) {
             // Enter fullscreen
@@ -101,10 +102,23 @@ require(['mod_codeframe/tracker'], function(tracker) {
                 wrapper.mozRequestFullScreen();
             } else if (wrapper.webkitRequestFullscreen) {
                 wrapper.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+            } else {
+                // Fallback for iOS iPhone where Fullscreen API is not supported on arbitrary elements
+                wrapper.classList.add('is-fullscreen-fallback');
+                wrapper.classList.add('is-fullscreen');
+                if (iconMaximize) iconMaximize.style.display = 'none';
+                if (iconMinimize) iconMinimize.style.display = 'block';
+                document.body.style.overflow = 'hidden';
             }
         } else {
             // Exit fullscreen
-            if (document.exitFullscreen) {
+            if (wrapper.classList.contains('is-fullscreen-fallback')) {
+                wrapper.classList.remove('is-fullscreen-fallback');
+                wrapper.classList.remove('is-fullscreen');
+                if (iconMaximize) iconMaximize.style.display = 'block';
+                if (iconMinimize) iconMinimize.style.display = 'none';
+                document.body.style.overflow = '';
+            } else if (document.exitFullscreen) {
                 document.exitFullscreen();
             } else if (document.msExitFullscreen) {
                 document.msExitFullscreen();
