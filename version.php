@@ -28,4 +28,4 @@ $plugin->version   = 2026083000;
 $plugin->requires  = 2022112800;
 $plugin->component = 'mod_codeframe';
 $plugin->maturity  = MATURITY_STABLE;
-$plugin->release   = '1.5.1';
+$plugin->release   = '1.5.2';
