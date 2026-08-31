@@ -40,7 +40,7 @@ class backup_codeframe_activity_structure_step extends backup_activity_structure
         // 1. Define the XML structure.
         $codeframe = new backup_nested_element('codeframe', ['id'], [
             'course', 'name', 'intro', 'introformat', 'embedcode',
-            'completioncomplete', 'timecreated', 'timemodified',
+            'aspectratio', 'completioncomplete', 'timecreated', 'timemodified',
         ]);
 
         $completions = new backup_nested_element('codeframe_completions');
