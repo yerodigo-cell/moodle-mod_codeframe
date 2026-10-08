@@ -45,7 +45,16 @@
     padding-bottom: 177.7778%;
 }
 
-body#page-mod-codeframe-view .codeframe_wrapper iframe {
+.codeframe_wrapper.ratio-auto {
+    padding-bottom: 0 !important;
+    height: auto;
+    box-shadow: none;
+    background: transparent;
+    overflow: visible !important;
+}
+
+body#page-mod-codeframe-view .codeframe_wrapper iframe,
+body#page-mod-codeframe-view .codeframe_wrapper elevenlabs-convai {
     position: absolute;
     top: 0;
     left: 0;
@@ -54,6 +63,14 @@ body#page-mod-codeframe-view .codeframe_wrapper iframe {
     border: none;
     border-radius: 6px;
     display: block;
+}
+
+/* If using auto ratio, let the content determine the height */
+body#page-mod-codeframe-view .codeframe_wrapper.ratio-auto iframe,
+body#page-mod-codeframe-view .codeframe_wrapper.ratio-auto elevenlabs-convai {
+    position: relative;
+    height: auto;
+    min-height: 600px; /* Fallback for iframes without inherent height */
 }
 
 /* ── Mobile & Portrait view customization ────────────────────────────────── */

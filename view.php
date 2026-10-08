@@ -102,6 +102,8 @@ if (!empty($codeframe->aspectratio)) {
     } else if ($codeframe->aspectratio === '9:16') {
         $templatedata['aspectclass'] = ' ratio-9-16';
         $basepadding = 177.7778;
+    } else if ($codeframe->aspectratio === 'auto') {
+        $templatedata['aspectclass'] = ' ratio-auto';
     }
 }
 

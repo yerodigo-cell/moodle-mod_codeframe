@@ -91,6 +91,7 @@ class mod_codeframe_mod_form extends moodleform_mod {
             '1:1'  => get_string('aspectratio_1_1', 'mod_codeframe'),
             '3:4'  => get_string('aspectratio_3_4', 'mod_codeframe'),
             '9:16' => get_string('aspectratio_9_16', 'mod_codeframe'),
+            'auto' => get_string('aspectratio_auto', 'mod_codeframe'),
         ];
         $mform->addElement('select', 'aspectratio', get_string('aspectratio', 'mod_codeframe'), $aspectoptions);
         $mform->setDefault('aspectratio', '16:9');
