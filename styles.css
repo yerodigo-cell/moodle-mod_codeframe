@@ -46,13 +46,14 @@
 }
 
 .codeframe_wrapper.ratio-auto {
-    padding-bottom: 0 !important;
+    padding-bottom: 0;
     height: auto;
     box-shadow: none;
     background: transparent;
-    overflow: visible !important;
+    overflow: visible;
 }
 
+/* stylelint-disable selector-type-no-unknown */
 body#page-mod-codeframe-view .codeframe_wrapper iframe,
 body#page-mod-codeframe-view .codeframe_wrapper elevenlabs-convai {
     position: absolute;
@@ -72,6 +73,7 @@ body#page-mod-codeframe-view .codeframe_wrapper.ratio-auto elevenlabs-convai {
     height: auto;
     min-height: 600px; /* Fallback for iframes without inherent height */
 }
+/* stylelint-enable selector-type-no-unknown */
 
 /* ── Mobile & Portrait view customization ────────────────────────────────── */
 @media (max-width: 767px) {
