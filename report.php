@@ -106,17 +106,39 @@ if (empty($students)) {
     $rows = [];
 
     foreach ($students as $student) {
-        // Render student picture and name.
+        // Render student picture and name safely against custom theme overrides.
         if (isset($student->email) && !is_scalar($student->email)) {
             $student->email = '';
         }
         if (isset($student->imagealt) && !is_scalar($student->imagealt)) {
             $student->imagealt = '';
         }
-        $userpicture = new user_picture($student);
-        $userpicture->size = 35;
-        $picturehtml = (string)$OUTPUT->render($userpicture);
-        $fullname = (string)fullname($student);
+
+        $picturehtml = '';
+        try {
+            $renderedpicture = $OUTPUT->user_picture($student, ['size' => 35]);
+            if (is_scalar($renderedpicture)) {
+                $picturehtml = (string)$renderedpicture;
+            }
+        } catch (\Throwable $e) {
+            $picturehtml = '';
+        }
+
+        $fullname = '';
+        try {
+            $renderedname = fullname($student);
+            if (is_scalar($renderedname)) {
+                $fullname = (string)$renderedname;
+            }
+        } catch (\Throwable $e) {
+            $fullname = '';
+        }
+        if ($fullname === '') {
+            $firstname = isset($student->firstname) && is_scalar($student->firstname) ? (string)$student->firstname : '';
+            $lastname = isset($student->lastname) && is_scalar($student->lastname) ? (string)$student->lastname : '';
+            $fullname = trim($firstname . ' ' . $lastname);
+        }
+
         $studentcell = html_writer::div($picturehtml . ' ' . $fullname, 'd-flex align-items-center gap-2');
 
         // Determine completion status using Moodle core and plugin custom table as fallback.
