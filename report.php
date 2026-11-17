@@ -84,8 +84,10 @@ if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups
 // Filter out users who have the capability to view reports or add instances (teachers/admins).
 $students = [];
 foreach ($enrolledusers as $user) {
-    if (!has_capability('mod/codeframe:addinstance', $context, $user) &&
-            !has_capability('mod/codeframe:viewreport', $context, $user)) {
+    if (
+        !has_capability('mod/codeframe:addinstance', $context, $user) &&
+        !has_capability('mod/codeframe:viewreport', $context, $user)
+    ) {
         $students[] = $user;
     }
 }

@@ -300,8 +300,10 @@ function codeframe_extend_settings_navigation(settings_navigation $settingsnav, 
     }
 
     // Only show the report to users with permission to view reports or add instances.
-    if (has_capability('mod/codeframe:viewreport', $PAGE->context) ||
-            has_capability('mod/codeframe:addinstance', $PAGE->context)) {
+    if (
+        has_capability('mod/codeframe:viewreport', $PAGE->context) ||
+        has_capability('mod/codeframe:addinstance', $PAGE->context)
+    ) {
         // Create the URL for the report page.
         $url = new moodle_url('/mod/codeframe/report.php', ['id' => $PAGE->cm->id]);
 
