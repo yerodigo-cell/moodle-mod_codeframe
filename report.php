@@ -33,8 +33,10 @@ $codeframe = $DB->get_record('codeframe', ['id' => $cm->instance], '*', MUST_EXI
 require_course_login($course, true, $cm);
 $context = context_module::instance($cm->id);
 
-// Security: Only allow users who can add instances (teachers/managers) to view the report.
-require_capability('mod/codeframe:addinstance', $context);
+// Security: Only allow users who can view reports or add instances (teachers/managers).
+if (!has_capability('mod/codeframe:viewreport', $context)) {
+    require_capability('mod/codeframe:addinstance', $context);
+}
 
 // Set up the page.
 $url = new moodle_url('/mod/codeframe/report.php', ['id' => $id]);
@@ -46,16 +48,44 @@ $PAGE->set_pagelayout('report');
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('progressreport', 'mod_codeframe'));
 
-// Fetch users enrolled in the course who can view the activity.
+// Handle course/activity groups and print group selector menu if applicable.
+$groupmode = groups_get_activity_groupmode($cm);
+$currentgroup = 0;
+if ($groupmode != NOGROUPS) {
+    groups_print_activity_menu($cm, $url);
+    $currentgroup = groups_get_activity_group($cm, true);
+}
+
+// Fetch users enrolled in the course who can view the activity, respecting group isolation.
 $coursecontext = context_course::instance($course->id);
 // Fetch all user fields (u.*) to prevent issues with custom themes or missing fields for fullname/user_picture.
 $userfields = 'u.*';
-$enrolledusers = get_enrolled_users($coursecontext, 'mod/codeframe:view', 0, $userfields);
+if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context)) {
+    $allowedgroups = groups_get_all_groups($course->id, $USER->id, $cm->groupingid);
+    $enrolledusers = [];
+    if (!empty($allowedgroups)) {
+        if ($currentgroup > 0) {
+            if (array_key_exists($currentgroup, $allowedgroups)) {
+                $enrolledusers = get_enrolled_users($coursecontext, 'mod/codeframe:view', $currentgroup, $userfields);
+            }
+        } else {
+            foreach ($allowedgroups as $allowedgroup) {
+                $groupusers = get_enrolled_users($coursecontext, 'mod/codeframe:view', $allowedgroup->id, $userfields);
+                foreach ($groupusers as $gu) {
+                    $enrolledusers[$gu->id] = $gu;
+                }
+            }
+        }
+    }
+} else {
+    $enrolledusers = get_enrolled_users($coursecontext, 'mod/codeframe:view', $currentgroup, $userfields);
+}
 
-// Filter out users who have the capability to add instances (usually teachers/admins).
+// Filter out users who have the capability to view reports or add instances (teachers/admins).
 $students = [];
 foreach ($enrolledusers as $user) {
-    if (!has_capability('mod/codeframe:addinstance', $context, $user)) {
+    if (!has_capability('mod/codeframe:addinstance', $context, $user) &&
+            !has_capability('mod/codeframe:viewreport', $context, $user)) {
         $students[] = $user;
     }
 }
@@ -66,11 +96,8 @@ if (empty($students)) {
     // Fetch all completions for this activity to avoid querying inside the loop.
     $completions = $DB->get_records('codeframe_completion', ['cmid' => $cm->id], '', 'userid, timecompleted, time_spent');
 
-
     // Fetch time tracking data.
     $timetracks = [];
-    require_once(__DIR__ . '/lib.php');
-    codeframe_ensure_time_table_exists();
     if ($DB->get_manager()->table_exists('codeframe_time')) {
         $timetracks = $DB->get_records(
             'codeframe_time',
@@ -80,19 +107,35 @@ if (empty($students)) {
         );
     }
 
+    // Check whether email identity field can be shown to the current user.
+    $showemail = false;
+    if (class_exists('\core_user\fields')) {
+        $identityfields = \core_user\fields::get_identity_fields($context, false);
+        $showemail = in_array('email', $identityfields, true);
+    } else {
+        $showemail = has_capability('moodle/site:viewuseridentity', $context);
+    }
+
     // Build the table using flexible_table for sorting capabilities.
     require_once($CFG->libdir . '/tablelib.php');
     $table = new flexible_table('mod-codeframe-report-' . $cm->id);
     $table->define_baseurl($url->out(false));
-    $table->define_columns(['fullname', 'email', 'status', 'started', 'completed', 'duration']);
-    $table->define_headers([
-        get_string('fullname'),
-        get_string('email'),
+
+    $columns = ['fullname'];
+    $headers = [get_string('fullname')];
+    if ($showemail) {
+        $columns[] = 'email';
+        $headers[] = get_string('email');
+    }
+    $columns = array_merge($columns, ['status', 'started', 'completed', 'duration']);
+    $headers = array_merge($headers, [
         get_string('status', 'mod_codeframe'),
         get_string('started', 'mod_codeframe'),
         get_string('completed', 'mod_codeframe'),
         get_string('duration', 'mod_codeframe'),
     ]);
+    $table->define_columns($columns);
+    $table->define_headers($headers);
 
     $table->sortable(true, 'fullname');
     $table->set_attribute('class', 'generaltable mt-4');
@@ -139,7 +182,7 @@ if (empty($students)) {
             $fullname = trim($firstname . ' ' . $lastname);
         }
 
-        $studentcell = html_writer::div($picturehtml . ' ' . $fullname, 'd-flex align-items-center gap-2');
+        $studentcell = html_writer::div($picturehtml . ' ' . s($fullname), 'd-flex align-items-center gap-2');
 
         // Determine completion status using Moodle core and plugin custom table as fallback.
         $cdata = $completion->get_data($cminfo, false, $student->id);
@@ -208,22 +251,27 @@ if (empty($students)) {
             $statushtml = html_writer::span($icon, $class, ['style' => 'font-size:14px;']);
         }
 
+        $emailvalue = ($showemail && isset($student->email) && is_scalar($student->email))
+            ? (string)$student->email
+            : '';
+
         $row = new stdClass();
         $row->fullname_sort = $fullname;
-        $row->email_sort = $student->email;
+        $row->email_sort = $emailvalue;
         $row->status_sort = $hascompleted ? 3 : ($hasstarted ? 2 : 1);
         $row->started_sort = $hasstarted ? $timetracks[$student->id]->time_started : 0;
         $row->completed_sort = $timecompletedtimestamp;
         $row->duration_sort = $durationseconds;
 
-        $row->display = [
-            $studentcell,
-            is_scalar($student->email) ? (string)$student->email : '',
-            $statushtml,
-            $timestarted,
-            $timecompleted,
-            $duration,
-        ];
+        $display = [$studentcell];
+        if ($showemail) {
+            $display[] = s($emailvalue);
+        }
+        $display[] = $statushtml;
+        $display[] = $timestarted;
+        $display[] = $timecompleted;
+        $display[] = $duration;
+        $row->display = $display;
         $rows[] = $row;
     }
 

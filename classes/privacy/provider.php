@@ -52,6 +52,7 @@ class provider implements
         $collection->add_database_table('codeframe_completion', [
             'userid' => 'privacy:metadata:codeframe_completion:userid',
             'timecompleted' => 'privacy:metadata:codeframe_completion:timecompleted',
+            'time_spent' => 'privacy:metadata:codeframe_completion:time_spent',
         ], 'privacy:metadata:codeframe_completion');
 
         $collection->add_database_table('codeframe_time', [
@@ -128,6 +129,7 @@ class provider implements
             if ($completion) {
                 $exportdata = (object)[
                     'timecompleted' => transform::datetime($completion->timecompleted),
+                    'time_spent' => isset($completion->time_spent) ? $completion->time_spent : 0,
                 ];
                 writer::with_context($context)->export_related_data([], 'codeframe_completion', $exportdata);
             }

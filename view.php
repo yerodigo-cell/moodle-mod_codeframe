@@ -61,9 +61,13 @@ if (empty($codeframe->completioncomplete)) {
     $completion->set_module_viewed($cm);
 }
 
-// Store the active CMID in the user's session for universal completion tracking.
+// Store the active CMID and per-activity timestamp in the user's session for universal completion tracking.
 global $SESSION;
 $SESSION->codeframe_active_cmid = $cm->id;
+if (!isset($SESSION->codeframe_active_sessions) || !is_array($SESSION->codeframe_active_sessions)) {
+    $SESSION->codeframe_active_sessions = [];
+}
+$SESSION->codeframe_active_sessions[$cm->id] = time();
 
 // Load the time tracker script to keep track of the duration of the visit.
 $PAGE->requires->js_call_amd('mod_codeframe/time_tracker', 'init', [$cm->id]);
@@ -116,7 +120,13 @@ if (strpos($codeframe->embedcode, 'docs.google.com/presentation') !== false) {
 }
 
 if (trim($codeframe->embedcode) !== '') {
-    $templatedata['iframecontent'] = codeframe_build_embed_html($codeframe->embedcode);
+    $embedhtml = codeframe_build_embed_html($codeframe->embedcode);
+    if ($embedhtml !== '') {
+        $templatedata['iframecontent'] = $embedhtml;
+    } else {
+        $templatedata['haserror'] = true;
+        $templatedata['error'] = get_string('error_invalid_url', 'mod_codeframe');
+    }
 } else {
     // Scan Moodle's storage for uploaded HTML5 files.
     $fs = get_file_storage();

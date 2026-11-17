@@ -106,5 +106,45 @@ function xmldb_codeframe_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2026072700, 'codeframe');
     }
 
+    // Upgrade step: Ensure time tracking columns, completion time_spent, and new capabilities exist.
+    if ($oldversion < 2026111700) {
+        $table = new xmldb_table('codeframe_time');
+        if (!$dbman->table_exists($table)) {
+            $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+            $table->add_field('cmid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+            $table->add_field('last_session_duration', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+            $table->add_field('last_ping', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+            $table->add_field('total_duration', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+            $table->add_field('time_started', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+            $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+            $table->add_index('cmid_userid', XMLDB_INDEX_UNIQUE, ['cmid', 'userid']);
+
+            $dbman->create_table($table);
+        } else {
+            $field = new xmldb_field('total_duration', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+            if (!$dbman->field_exists($table, $field)) {
+                $dbman->add_field($table, $field);
+            }
+
+            $field2 = new xmldb_field('time_started', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+            if (!$dbman->field_exists($table, $field2)) {
+                $dbman->add_field($table, $field2);
+            }
+        }
+
+        $completiontable = new xmldb_table('codeframe_completion');
+        if ($dbman->table_exists($completiontable)) {
+            $field = new xmldb_field('time_spent', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+            if (!$dbman->field_exists($completiontable, $field)) {
+                $dbman->add_field($completiontable, $field);
+            }
+        }
+
+        update_capabilities('mod_codeframe');
+        upgrade_mod_savepoint(true, 2026111700, 'codeframe');
+    }
+
     return true;
 }

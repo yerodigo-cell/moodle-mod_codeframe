@@ -21,16 +21,26 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-export const init = () => {
-    // Write to localStorage for cross-tab communication.
-    try {
-        const ts = Date.now().toString();
-        localStorage.setItem('codeframe_canva_finished_universal', ts);
-        setTimeout(() => {
-            localStorage.removeItem('codeframe_canva_finished_universal');
-        }, 500);
-    } catch (e) {
-        window.console.error('No se pudo escribir en localStorage', e);
+/**
+ * Initialize finish page cross-tab signaling and window closing.
+ *
+ * @param {Number} cmid The completed course module ID, or 0 if not completed.
+ */
+export const init = (cmid = 0) => {
+    // Write to localStorage for cross-tab communication only when a CMID completed.
+    if (cmid > 0) {
+        try {
+            const ts = Date.now().toString();
+            const cmidStr = String(cmid);
+            localStorage.setItem('codeframe_canva_finished_universal', `${cmidStr}:${ts}`);
+            localStorage.setItem('codeframe_completed_cmid', cmidStr);
+            setTimeout(() => {
+                localStorage.removeItem('codeframe_canva_finished_universal');
+                localStorage.removeItem('codeframe_completed_cmid');
+            }, 500);
+        } catch (e) {
+            window.console.error('No se pudo escribir en localStorage', e);
+        }
     }
 
     // Automatically close the window after a short delay.

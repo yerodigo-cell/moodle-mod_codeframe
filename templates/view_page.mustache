@@ -49,7 +49,7 @@
                 <div class="alert alert-danger">{{error}}</div>
             {{/haserror}}
             {{^haserror}}
-                <iframe id="codeframe_iframe_{{cmid}}" src="{{url}}" allow="autoplay; fullscreen; encrypted-media" style="width: 100%; height: 100%; border: 0;"></iframe>
+                <iframe id="codeframe_iframe_{{cmid}}" src="{{url}}" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-modals" allow="autoplay; fullscreen; encrypted-media" style="width: 100%; height: 100%; border: 0;"></iframe>
             {{/haserror}}
         {{/iframecontent}}
 
@@ -171,6 +171,16 @@ require(['mod_codeframe/tracker'], function(tracker) {
     document.addEventListener('mozfullscreenchange', handleFullscreenChange);
     document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 
+    var escapeHtml = function(text) {
+        var str = text === null || typeof text === 'undefined' ? '' : String(text);
+        return str
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    };
+
     // Bug Safari: If an iframe calls alert() while in fullscreen, Safari crashes with a black screen.
     // Since uploaded HTMLs are same-origin, we can override their alert/confirm functions.
     // Even exiting fullscreen before alert() can crash Safari if DOM mutations happen concurrently,
@@ -185,11 +195,16 @@ require(['mod_codeframe/tracker'], function(tracker) {
                 }
 
                 cw.alert = function(msg) {
-                    // Post a message to parent so we can show a Moodle notification
-                    window.postMessage({
-                        type: 'codeframe_custom_alert',
-                        message: msg
-                    }, '*');
+                    var safeMsg = escapeHtml(msg);
+                    require(['core/notification', 'core/str'], function(Notification, Str) {
+                        Str.get_string('info', 'moodle').then(function(title) {
+                            Notification.alert(title, safeMsg, 'OK');
+                            return;
+                        }).catch(function() {
+                            Notification.alert('Info', safeMsg, 'OK');
+                            return;
+                        });
+                    });
                 };
 
                 // Confirm is trickier because it must return a boolean synchronously.
@@ -203,20 +218,5 @@ require(['mod_codeframe/tracker'], function(tracker) {
             }
         });
     }
-
-    // Listen for our custom alert message
-    window.addEventListener('message', function(event) {
-        if (event.data && event.data.type === 'codeframe_custom_alert') {
-            require(['core/notification', 'core/str'], function(Notification, Str) {
-                Str.get_string('info', 'moodle').then(function(title) {
-                    Notification.alert(title, event.data.message, 'OK');
-                    return;
-                }).catch(function() {
-                    Notification.alert('Info', event.data.message, 'OK');
-                    return;
-                });
-            });
-        }
-    });
 })();
 {{/js}}

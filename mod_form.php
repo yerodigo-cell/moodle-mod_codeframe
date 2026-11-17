@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/course/moodleform_mod.php');
+require_once(__DIR__ . '/lib.php');
 
 /**
  * Settings form class for Codeframe.
@@ -75,12 +76,18 @@ class mod_codeframe_mod_form extends moodleform_mod {
         $mform->addHelpButton('embedcode', 'embedcode', 'mod_codeframe');
 
         // Filemanager for local HTML5 slide/presentation code files.
+        $acceptedtypes = [
+            '.html', '.htm', '.css', '.js', '.mjs', '.json', '.xml', '.txt', '.csv', '.md',
+            '.woff', '.woff2', '.ttf', '.otf', '.eot', '.svg', '.png', '.jpg', '.jpeg', '.gif',
+            '.webp', '.avif', '.ico', '.mp3', '.wav', '.ogg', '.m4a', '.mp4', '.webm', '.ogv',
+            '.pdf', '.zip', '.glb', '.gltf', '.bin', '.wasm', '.webmanifest',
+        ];
         $mform->addElement(
             'filemanager',
             'files',
             get_string('uploadfiles', 'mod_codeframe'),
             null,
-            ['subdirs' => 1, 'accepted_types' => '*']
+            ['subdirs' => 1, 'accepted_types' => $acceptedtypes]
         );
         $mform->addHelpButton('files', 'uploadfiles', 'mod_codeframe');
 
@@ -148,7 +155,12 @@ class mod_codeframe_mod_form extends moodleform_mod {
             }
         }
 
-        if (empty(trim($data['embedcode'])) && !$hasfiles) {
+        $embedcode = isset($data['embedcode']) ? trim((string)$data['embedcode']) : '';
+        if ($embedcode !== '' && codeframe_build_embed_html($embedcode) === '') {
+            $errors['embedcode'] = get_string('error_invalid_url', 'mod_codeframe');
+        }
+
+        if ($embedcode === '' && !$hasfiles) {
             $msg = get_string('error_url_or_files', 'mod_codeframe');
             $errors['embedcode'] = $msg;
             $errors['files'] = $msg;

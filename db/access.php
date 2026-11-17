@@ -49,4 +49,16 @@ $capabilities = [
             'manager'        => CAP_ALLOW,
         ],
     ],
+
+    // Ability to view the activity progress report.
+    'mod/codeframe:viewreport' => [
+        'captype'      => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes'   => [
+            'teacher'        => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager'        => CAP_ALLOW,
+        ],
+        'clonepermissionsfrom' => 'moodle/site:viewreports',
+    ],
 ];

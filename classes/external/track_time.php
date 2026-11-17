@@ -19,7 +19,6 @@ namespace mod_codeframe\external;
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir . '/externallib.php');
-require_once(__DIR__ . '/../../lib.php');
 
 use external_api;
 use external_function_parameters;
@@ -65,8 +64,6 @@ class track_time extends external_api {
         $context = \context_module::instance($cm->id);
         self::validate_context($context);
         require_capability('mod/codeframe:view', $context);
-
-        codeframe_ensure_time_table_exists();
 
         $now = time();
         $pinginterval = 30; // Max gap in seconds to be considered the same session. Pings should happen every 10s.

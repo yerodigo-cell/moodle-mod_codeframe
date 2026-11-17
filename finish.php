@@ -29,17 +29,54 @@ require_once(__DIR__ . '/lib.php');
 // Authenticate user.
 require_login();
 
-// Retrieve the active CMID from the user's session (set by view.php).
-// This allows the link to be universal without hardcoding the ID in Canva.
+// Reject cross-site sub-resource requests (e.g., hidden <img> or <iframe> CSRF triggers),
+// direct address-bar navigation (Sec-Fetch-Site: none), and non-user-initiated redirects.
+$fetchdest = isset($_SERVER['HTTP_SEC_FETCH_DEST']) ? strtolower((string)$_SERVER['HTTP_SEC_FETCH_DEST']) : '';
+$fetchmode = isset($_SERVER['HTTP_SEC_FETCH_MODE']) ? strtolower((string)$_SERVER['HTTP_SEC_FETCH_MODE']) : '';
+$fetchsite = isset($_SERVER['HTTP_SEC_FETCH_SITE']) ? strtolower((string)$_SERVER['HTTP_SEC_FETCH_SITE']) : '';
+$fetchuser = isset($_SERVER['HTTP_SEC_FETCH_USER']) ? trim((string)$_SERVER['HTTP_SEC_FETCH_USER']) : '';
+$isvaliddocumentnavigation = true;
+if ($fetchdest !== '' && $fetchdest !== 'document') {
+    $isvaliddocumentnavigation = false;
+}
+if ($fetchmode !== '' && $fetchmode !== 'navigate') {
+    $isvaliddocumentnavigation = false;
+}
+if ($fetchsite !== '' && !in_array($fetchsite, ['cross-site', 'same-origin', 'same-site'], true)) {
+    $isvaliddocumentnavigation = false;
+}
+if ($fetchsite !== '' && $fetchuser !== '?1') {
+    $isvaliddocumentnavigation = false;
+}
+
+// Retrieve optional explicit CMID or fallback to the active CMID stored in the user's session.
+$requestedcmid = optional_param('cmid', 0, PARAM_INT);
 global $SESSION;
-$cmid = isset($SESSION->codeframe_active_cmid) ? $SESSION->codeframe_active_cmid : 0;
+$cmid = $requestedcmid > 0
+    ? $requestedcmid
+    : (isset($SESSION->codeframe_active_cmid) ? (int)$SESSION->codeframe_active_cmid : 0);
+
+// Require that this CMID was opened in the current user session within the last 4 hours.
+$hasrecentview = false;
+if ($cmid > 0 && isset($SESSION->codeframe_active_sessions) && is_array($SESSION->codeframe_active_sessions)) {
+    if (!empty($SESSION->codeframe_active_sessions[$cmid])) {
+        $openedat = (int)$SESSION->codeframe_active_sessions[$cmid];
+        if ((time() - $openedat) <= (4 * 3600)) {
+            $hasrecentview = true;
+        }
+    }
+}
 
 $success = false;
-if ($cmid > 0) {
+if ($isvaliddocumentnavigation && $cmid > 0 && $hasrecentview) {
     try {
         $cm = get_coursemodule_from_id('codeframe', $cmid, 0, false, MUST_EXIST);
         // Mark completed using the existing external webservice logic.
         \mod_codeframe\external\mark_completed::execute($cmid, $cm->course);
+        unset($SESSION->codeframe_active_sessions[$cmid]);
+        if (isset($SESSION->codeframe_active_cmid) && (int)$SESSION->codeframe_active_cmid === $cmid) {
+            unset($SESSION->codeframe_active_cmid);
+        }
         $success = true;
     } catch (\Exception $e) {
         // Log or ignore errors if the module doesn't exist or permissions fail.
@@ -70,7 +107,7 @@ $templatedata = [
     'btn'   => $btn,
 ];
 
-$PAGE->requires->js_call_amd('mod_codeframe/finish_page', 'init');
+$PAGE->requires->js_call_amd('mod_codeframe/finish_page', 'init', [$success ? $cmid : 0]);
 
 echo $OUTPUT->render_from_template('mod_codeframe/finish_page', $templatedata);
 

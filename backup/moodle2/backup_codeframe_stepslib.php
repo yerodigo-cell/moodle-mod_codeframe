@@ -46,7 +46,7 @@ class backup_codeframe_activity_structure_step extends backup_activity_structure
         $completions = new backup_nested_element('codeframe_completions');
 
         $completion = new backup_nested_element('codeframe_completion', ['id'], [
-            'userid', 'timecompleted',
+            'userid', 'timecompleted', 'time_spent',
         ]);
 
         // 2. Build the tree.

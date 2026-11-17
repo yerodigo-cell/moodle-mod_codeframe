@@ -53,11 +53,16 @@ class restore_codeframe_activity_structure_step extends restore_activity_structu
      * @param array $data The data.
      */
     protected function process_codeframe($data) {
-        global $DB;
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/mod/codeframe/lib.php');
 
         $data = (object)$data;
         $oldid = $data->id;
         $data->course = $this->get_courseid();
+
+        if (!empty($data->embedcode) && codeframe_build_embed_html((string)$data->embedcode) === '') {
+            $data->embedcode = '';
+        }
 
         $data->timecreated = $this->apply_date_offset($data->timecreated);
         $data->timemodified = $this->apply_date_offset($data->timemodified);
@@ -81,6 +86,7 @@ class restore_codeframe_activity_structure_step extends restore_activity_structu
         // Only insert if the user was mapped successfully.
         if ($data->userid) {
             $data->timecompleted = $this->apply_date_offset($data->timecompleted);
+            $data->time_spent = isset($data->time_spent) ? (int)$data->time_spent : 0;
             $DB->insert_record('codeframe_completion', $data);
         }
     }

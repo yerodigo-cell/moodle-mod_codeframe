@@ -87,8 +87,8 @@ class mark_completed extends codeframe_external_api {
         ]);
 
         // 2. Fetch records and validate context.
-        $course = $DB->get_record('course', ['id' => $params['courseid']], '*', MUST_EXIST);
-        $cm     = get_coursemodule_from_id('codeframe', $params['cmid'], 0, false, MUST_EXIST);
+        $cm     = get_coursemodule_from_id('codeframe', $params['cmid'], $params['courseid'], false, MUST_EXIST);
+        $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
 
         $context = \context_module::instance($cm->id);
         self::validate_context($context);

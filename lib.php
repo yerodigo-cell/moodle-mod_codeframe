@@ -118,12 +118,14 @@ function codeframe_delete_instance($id) {
         return false;
     }
 
-    // Delete associated files from Moodle storage.
+    // Delete associated files and tracking records from Moodle storage and database.
     $fs = get_file_storage();
     $cm = get_coursemodule_from_instance('codeframe', $id);
     if ($cm) {
         $context = context_module::instance($cm->id);
         $fs->delete_area_files($context->id, 'mod_codeframe', 'content', $id);
+        $DB->delete_records('codeframe_completion', ['cmid' => $cm->id]);
+        $DB->delete_records('codeframe_time', ['cmid' => $cm->id]);
     }
 
     // Delete the record from mdl_codeframe.
@@ -163,9 +165,10 @@ function codeframe_supports($feature) {
  * Build the HTML to embed in the student view.
  *
  * Accepts either:
- *   a) A plain URL  → wraps it in a safe <iframe>.
- *   b) Raw HTML     → extracts the iframe src to prevent double-wrappers (e.g. Canva),
- *                     or returns it unchanged if it's a script/custom embed.
+ *   a) A plain http/https URL -> wraps it in a sandboxed <iframe>.
+ *   b) An HTML <iframe> snippet -> extracts and validates its src attribute.
+ *
+ * Returns an empty string if the input is not a valid http/https URL.
  *
  * @param string $embedcode Value stored in mdl_codeframe.embedcode.
  * @return string Safe HTML ready to be echoed inside the wrapper div.
@@ -177,17 +180,25 @@ function codeframe_build_embed_html(string $embedcode): string {
         return '';
     }
 
-    // Check if the user pasted a raw HTML snippet containing an iframe (like Canva's embed code).
+    // Check if the user pasted an HTML snippet containing an iframe (like Canva's embed code).
     // If so, we extract just the 'src' URL to use our own clean responsive wrapper.
     if (preg_match('/<iframe[^>]+src=["\']([^"\']+)["\']/i', $value, $matches)) {
         // Decode HTML entities (like Canva's &#x2F;) back into a normal URL.
-        $value = html_entity_decode($matches[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    } else if (strpos($value, '<') === 0) {
-        // If it's HTML but NOT an iframe (e.g. a script embed), return it as-is.
-        return $value;
+        $value = trim(html_entity_decode($matches[1], ENT_QUOTES | ENT_HTML5, 'UTF-8'));
     }
 
-    // Now $value is definitely a plain URL.
+    // Validate URL strictly: reject raw HTML, javascript:, data:, or non-http(s) schemes.
+    $value = clean_param($value, PARAM_URL);
+    if ($value === '') {
+        return '';
+    }
+
+    $parts = parse_url($value);
+    $scheme = isset($parts['scheme']) ? strtolower($parts['scheme']) : '';
+    if (!in_array($scheme, ['http', 'https'], true) || empty($parts['host'])) {
+        return '';
+    }
+
     // Smart URL converters.
     // YouTube.
     if (preg_match('#^https?://(?:www\.)?youtube\.com/watch\?v=([^&]+)#i', $value, $matches)) {
@@ -214,12 +225,15 @@ function codeframe_build_embed_html(string $embedcode): string {
 
     // Htmlspecialchars prevents XSS via crafted URLs.
     $safeurl = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
+    $sandbox = 'allow-scripts allow-same-origin allow-forms allow-popups'
+        . ' allow-popups-to-escape-sandbox allow-presentation allow-top-navigation-by-user-activation';
 
     return '<iframe'
         . ' src="' . $safeurl . '"'
         . ' width="100%"'
         . ' height="100%"'
         . ' frameborder="0"'
+        . ' sandbox="' . $sandbox . '"'
         . ' allow="autoplay; fullscreen; encrypted-media"'
         . ' style="border:0;"'
         . '></iframe>';
@@ -285,8 +299,9 @@ function codeframe_extend_settings_navigation(settings_navigation $settingsnav, 
         return;
     }
 
-    // Only show the report to users with permission to add instances (teachers/managers).
-    if (has_capability('mod/codeframe:addinstance', $PAGE->context)) {
+    // Only show the report to users with permission to view reports or add instances.
+    if (has_capability('mod/codeframe:viewreport', $PAGE->context) ||
+            has_capability('mod/codeframe:addinstance', $PAGE->context)) {
         // Create the URL for the report page.
         $url = new moodle_url('/mod/codeframe/report.php', ['id' => $PAGE->cm->id]);
 
@@ -352,50 +367,4 @@ function codeframe_get_completion_state($course, $cm, $userid, $type) {
     }
 
     return COMPLETION_UNKNOWN;
-}
-
-/**
- * Ensures the codeframe_time table exists, creating it if necessary.
- * This acts as a fallback for users who don't visit the Notifications page to trigger the upgrade.
- */
-function codeframe_ensure_time_table_exists() {
-    global $DB;
-    $dbman = $DB->get_manager();
-
-    if (!$dbman->table_exists('codeframe_time')) {
-        $table = new xmldb_table('codeframe_time');
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('cmid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('last_session_duration', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('last_ping', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-        $table->add_index('cmid_userid', XMLDB_INDEX_UNIQUE, ['cmid', 'userid']);
-
-        $dbman->create_table($table);
-    }
-
-    // Ensure codeframe_time has total_duration.
-    if ($dbman->table_exists('codeframe_time')) {
-        $table = new xmldb_table('codeframe_time');
-        $field = new xmldb_field('total_duration', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        $field2 = new xmldb_field('time_started', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        if (!$dbman->field_exists($table, $field2)) {
-            $dbman->add_field($table, $field2);
-        }
-    }
-
-    // Ensure codeframe_completion has time_spent.
-    if ($dbman->table_exists('codeframe_completion')) {
-        $table = new xmldb_table('codeframe_completion');
-        $field = new xmldb_field('time_spent', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-    }
 }
